@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<targets>
+
+  <rrlib name="geometry">
+    <sources>
+      tBezierCurve.cpp
+      tBoundingBox.h
+      tLine.cpp
+      tLineSegment.cpp
+      tShape.h
+      tPoint.cpp
+    </sources>
+  </rrlib>
+
+  <testprogram name="geometries">
+    <sources>
+      test/test_geometries.cpp
+    </sources>
+  </testprogram>
+
+</targets>
