@@ -79,7 +79,7 @@ class tLine : public tShape<Tdimension, TElement>
 //----------------------------------------------------------------------
 public:
 
-  typedef typename tShape::tPoint::tElementType tParameter;
+  typedef typename tShape::tPoint::tElement tParameter;
 
   tLine(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &direction);
   tLine(const typename tShape::tPoint &support, const typename tShape::tPoint &second_support);
