@@ -41,6 +41,9 @@
 #include "rrlib/geometry/tShape.h"
 #include "rrlib/geometry/tLine.h"
 #include "rrlib/geometry/tBezierCurve.h"
+#include "rrlib/geometry/tUniformBSplineCurve.h"
+#include "rrlib/geometry/tCardinalSplineCurve.h"
+
 #include "rrlib/highgui_wrapper/tWindow.h"
 
 //----------------------------------------------------------------------
@@ -63,6 +66,9 @@ typedef rrlib::geometry::tPoint<2, tElement> tPoint;
 typedef rrlib::geometry::tLine<2, tElement> tLine;
 typedef rrlib::geometry::tLineSegment<2, tElement> tLineSegment;
 typedef rrlib::geometry::tBezierCurve<2, tElement, 3> tBezierCurve;
+typedef rrlib::geometry::tSplineCurve<2, tElement, 3> tSplineCurve;
+//typedef rrlib::geometry::tUniformBSplineCurve<2, tElement> tConcreteSplineCurve;
+typedef rrlib::geometry::tCardinalSplineCurve<2, tElement> tConcreteSplineCurve;
 
 //----------------------------------------------------------------------
 // Const values
@@ -119,6 +125,17 @@ void DrawControlPolygon(tWindow &window, const tBezierCurve &bezier_curve)
   }
 }
 
+void DrawControlPolygon(tWindow &window, const tSplineCurve &spline_curve)
+{
+  for (size_t i = 1; i < spline_curve.GetNumberOfControlPoints(); ++i)
+  {
+    const tPoint &start(spline_curve.GetControlPoint(i - 1));
+    const tPoint &stop(spline_curve.GetControlPoint(i));
+
+    window.DrawLineNormalized(start.X(), start.Y(), stop.X(), stop.Y());
+  }
+}
+
 void DrawBezierCurve(tWindow &window, const tBezierCurve &bezier_curve, float epsilon = 1.0E-6)
 {
   if (bezier_curve.GetTwist() < epsilon)
@@ -130,6 +147,14 @@ void DrawBezierCurve(tWindow &window, const tBezierCurve &bezier_curve, float ep
   std::pair<tBezierCurve, tBezierCurve> subdivision(bezier_curve.GetSubdivision());
   DrawBezierCurve(window, subdivision.first, epsilon);
   DrawBezierCurve(window, subdivision.second, epsilon);
+}
+
+void DrawSplineCurve(tWindow &window, const tSplineCurve &spline_curve, float epsilon = 1.0E-6)
+{
+  for (size_t i = 0; i < spline_curve.GetNumberOfSegments(); ++i)
+  {
+    DrawBezierCurve(window, spline_curve.GetBezierCurveForSegment(i), epsilon);
+  }
 }
 
 int main(int argc, char **argv)
@@ -244,6 +269,112 @@ int main(int argc, char **argv)
   window.SetColor(2);
   for (std::vector<tPoint>::iterator it = intersection_points.begin(); it != intersection_points.end(); ++it)
   {
+    DrawPoint(window, *it);
+  }
+  window.Render();
+
+  std::cout << std::endl << "=== Spline with bounding box ===" << std::endl;
+
+  control_points.clear();
+  control_points.push_back(tPoint(0.1, 0.2));
+  control_points.push_back(tPoint(0.1, 0.2));
+  control_points.push_back(tPoint(0.1, 0.2));
+  control_points.push_back(tPoint(0.3, 0.5));
+  control_points.push_back(tPoint(0.7, 0.6));
+  control_points.push_back(tPoint(0.9, 0.4));
+
+
+  tConcreteSplineCurve spline(control_points);
+
+  window.Clear();
+  window.SetColor(1);
+  DrawControlPolygon(window, spline);
+  window.SetColor(2);
+  DrawBoundingBox(window, spline);
+  window.SetColor(3);
+  DrawSplineCurve(window, spline);
+  window.Render();
+
+  std::cout << std::endl << "=== Adding point ===" << std::endl;
+
+  spline.AppendControlPoint(tPoint(0.75, 0.7));
+  window.Clear();
+  window.SetColor(1);
+  DrawControlPolygon(window, spline);
+  window.SetColor(2);
+  DrawBoundingBox(window, spline);
+  window.SetColor(3);
+  DrawSplineCurve(window, spline);
+  window.Render();
+
+  std::cout << std::endl << "=== Adding point ===" << std::endl;
+
+  spline.AppendControlPoint(tPoint(0.5, 0.8));
+  window.Clear();
+  window.SetColor(1);
+  DrawControlPolygon(window, spline);
+  window.SetColor(2);
+  DrawBoundingBox(window, spline);
+  window.SetColor(3);
+  DrawSplineCurve(window, spline);
+  window.Render();
+
+  std::cout << std::endl << "=== Adding point ===" << std::endl;
+
+  spline.AppendControlPoint(tPoint(0.2, 0.4));
+  window.Clear();
+  window.SetColor(1);
+  DrawControlPolygon(window, spline);
+  window.SetColor(2);
+  DrawBoundingBox(window, spline);
+  window.SetColor(3);
+  DrawSplineCurve(window, spline);
+  window.Render();
+
+  std::cout << std::endl << "=== Adding point ===" << std::endl;
+
+  spline.AppendControlPoint(tPoint(0.2, 0.4));
+  window.Clear();
+  window.SetColor(1);
+  DrawControlPolygon(window, spline);
+  window.SetColor(2);
+  DrawBoundingBox(window, spline);
+  window.SetColor(3);
+  DrawSplineCurve(window, spline);
+  window.Render();
+
+  std::cout << std::endl << "=== Adding point ===" << std::endl;
+
+  spline.AppendControlPoint(tPoint(0.2, 0.4));
+  window.Clear();
+  window.SetColor(1);
+  DrawControlPolygon(window, spline);
+  window.SetColor(2);
+  DrawBoundingBox(window, spline);
+  window.SetColor(3);
+  DrawSplineCurve(window, spline);
+  window.Render();
+
+  std::cout << std::endl << "=== Spline intersects line ===" << std::endl;
+
+  window.Clear();
+  window.SetColor(0);
+  line.Translate(tVector(0, 0.1));
+  DrawLine(window, line);
+  window.SetColor(1);
+  DrawSplineCurve(window, spline);
+
+  window.Render();
+
+  intersection_points.clear();
+  intersection_parameters.clear();
+  spline.GetIntersections(intersection_points, intersection_parameters, line);
+  std::cout << "number of intersections: " << intersection_points.size() << std::endl;
+
+  window.SetColor(2);
+  for (std::vector<tPoint>::iterator it = intersection_points.begin(); it != intersection_points.end(); ++it)
+  {
+    std::cout << *it << std::endl;
     DrawPoint(window, *it);
   }
   window.Render();

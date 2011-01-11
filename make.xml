@@ -5,10 +5,13 @@
     <sources>
       tBezierCurve.cpp
       tBoundingBox.h
+      tCardinalSplineCurve.h
       tLine.cpp
       tLineSegment.cpp
-      tShape.h
       tPoint.cpp
+      tShape.h
+      tSplineCurve.h
+      tUniformBSplineCurve.h
     </sources>
   </rrlib>
 

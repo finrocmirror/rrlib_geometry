@@ -189,8 +189,6 @@ template <unsigned int Tother_degree>
 const bool tBezierCurve<Tdimension, TElement, Tdegree>::GetIntersections(std::vector<typename tShape::tPoint> &intersection_points, std::vector<tParameter> &intersection_parameters,
     const tBezierCurve<Tdimension, TElement, Tother_degree> &other) const
 {
-  intersection_points.clear();
-  intersection_parameters.clear();
   return this->GetIntersections(intersection_points, intersection_parameters, other, 0.0, 1.0);
 }
 
@@ -198,8 +196,6 @@ template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 const bool tBezierCurve<Tdimension, TElement, Tdegree>::GetIntersections(std::vector<typename tShape::tPoint> &intersection_points, std::vector<tParameter> &intersection_parameters,
     const tLine<Tdimension, TElement> &line) const
 {
-  intersection_points.clear();
-  intersection_parameters.clear();
   return this->GetIntersections(intersection_points, intersection_parameters, line, 0.0, 1.0);
 }
 
