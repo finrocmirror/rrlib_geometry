@@ -79,7 +79,11 @@ class tCardinalSplineCurve : public tSplineCurve<Tdimension, TElement, 3>
 //----------------------------------------------------------------------
 public:
 
-  tCardinalSplineCurve(const std::vector<typename tShape::tPoint> &control_points, double tension = 0.0);
+  template <typename TIterator>
+  tCardinalSplineCurve(TIterator begin, TIterator end, double tension = 0.0);
+
+  template <typename TSTLContainer>
+  explicit tCardinalSplineCurve(const TSTLContainer &control_points, double tension = 0.0);
 
   inline double GetTension() const
   {

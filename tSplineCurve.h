@@ -85,7 +85,11 @@ public:
   typedef geometry::tBezierCurve<Tdimension, TElement, Tdegree> tBezierCurve;
   typedef typename tBezierCurve::tParameter tParameter;
 
-  tSplineCurve(const std::vector<typename tShape::tPoint> &control_points);
+  template <typename TIterator>
+  tSplineCurve(TIterator begin, TIterator end);
+
+  template <typename TSTLContainer>
+  explicit tSplineCurve(const TSTLContainer &control_points);
 
   inline const size_t GetNumberOfControlPoints() const
   {

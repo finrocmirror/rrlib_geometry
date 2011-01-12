@@ -79,7 +79,11 @@ class tUniformBSplineCurve : public tSplineCurve<Tdimension, TElement, 3>
 //----------------------------------------------------------------------
 public:
 
-  tUniformBSplineCurve(const std::vector<typename tShape::tPoint> &control_points, double tension = 0.0);
+  template <typename TIterator>
+  tUniformBSplineCurve(TIterator begin, TIterator end, double tension = 0.0);
+
+  template <typename TSTLContainer>
+  explicit tUniformBSplineCurve(const TSTLContainer &control_points, double tension = 0.0);
 
   inline double GetTension() const
   {

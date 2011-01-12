@@ -65,7 +65,15 @@ namespace geometry
 // tUniformBSplineCurve constructor
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-tUniformBSplineCurve<Tdimension, TElement>::tUniformBSplineCurve(const std::vector<typename tShape::tPoint> &control_points, double tension)
+template <typename TIterator>
+tUniformBSplineCurve<Tdimension, TElement>::tUniformBSplineCurve(TIterator begin, TIterator end, double tension)
+    : tSplineCurve(begin, end),
+    tension(tension)
+{}
+
+template <size_t Tdimension, typename TElement>
+template <typename TSTLContainer>
+tUniformBSplineCurve<Tdimension, TElement>::tUniformBSplineCurve(const TSTLContainer &control_points, double tension)
     : tSplineCurve(control_points),
     tension(tension)
 {}

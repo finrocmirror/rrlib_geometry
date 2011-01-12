@@ -31,6 +31,7 @@
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
 //----------------------------------------------------------------------
+#include <algorithm>
 
 //----------------------------------------------------------------------
 // Internal includes with ""
@@ -65,9 +66,18 @@ namespace geometry
 // tSplineCurve constructor
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
-tSplineCurve<Tdimension, TElement, Tdegree>::tSplineCurve(const std::vector<typename tShape::tPoint> &control_points)
-    : control_points(control_points)
+template <typename TIterator>
+tSplineCurve<Tdimension, TElement, Tdegree>::tSplineCurve(TIterator begin, TIterator end)
 {
+  std::copy(begin, end, std::back_inserter(this->control_points));
+  assert(control_points.size() > Tdegree);
+}
+
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+template <typename TSTLContainer>
+tSplineCurve<Tdimension, TElement, Tdegree>::tSplineCurve(const TSTLContainer &control_points)
+{
+  std::copy(control_points.begin(), control_points.end(), std::back_inserter(this->control_points));
   assert(control_points.size() > Tdegree);
 }
 
@@ -135,7 +145,7 @@ const typename tSplineCurve<Tdimension, TElement, Tdegree>::tBezierCurve tSpline
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 const typename tSplineCurve<Tdimension, TElement, Tdegree>::tBezierCurve tSplineCurve<Tdimension, TElement, Tdegree>::GetBezierCurveForParameter(tParameter t, tParameter &local_t) const
 {
-  local_t = t < this->GetNumberOfSegments() ? t - trunc(t) : 1.0;
+  local_t = t < this->GetNumberOfSegments() ? t - std::trunc(t) : 1.0;
   return this->GetBezierCurveForParameter(t);
 }
 
