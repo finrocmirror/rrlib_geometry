@@ -19,11 +19,11 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 //----------------------------------------------------------------------
-/*!\file    tLine.hpp
+/*!\file    tPlane.hpp
  *
  * \author  Tobias Foehst
  *
- * \date    2010-12-27
+ * \date    2011-01-19
  *
  */
 //----------------------------------------------------------------------
@@ -36,9 +36,6 @@
 // Internal includes with ""
 //----------------------------------------------------------------------
 #include "rrlib/math/utilities.h"
-#include "rrlib/math/tLUDecomposition.h"
-
-#include "rrlib/geometry/tLineSegment.h"
 
 //----------------------------------------------------------------------
 // Debugging
@@ -66,149 +63,77 @@ namespace geometry
 //----------------------------------------------------------------------
 
 //----------------------------------------------------------------------
-// tLine constructors
+// tPlane constructors
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-tLine<Tdimension, TElement>::tLine()
+tPlane<Tdimension, TElement>::tPlane()
 {
-  this->direction[0] = 1;
+  this->normal[0] = 1;
 }
 
 template <size_t Tdimension, typename TElement>
-tLine<Tdimension, TElement>::tLine(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &direction)
+tPlane<Tdimension, TElement>::tPlane(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &normal)
     : support(support),
-    direction(direction.Normalized())
+    normal(normal.Normalized())
 {}
 
 template <size_t Tdimension, typename TElement>
-tLine<Tdimension, TElement>::tLine(const typename tShape::tPoint &support, const typename tShape::tPoint &second_support)
-    : support(support),
-    direction((second_support - support).Normalized())
+tPlane<Tdimension, TElement>::tPlane(const typename tShape::tPoint &p1, const typename tShape::tPoint &p2, const typename tShape::tPoint &p3)
+    : support(p1),
+    normal(CrossProduct(p2 - p1, p3 - p1).Normalized())
 {}
 
 //----------------------------------------------------------------------
-// tLine Set
+// tPlane Set
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-void tLine<Tdimension, TElement>::Set(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &direction)
+void tPlane<Tdimension, TElement>::Set(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &direction)
 {
   this->support = support;
-  this->direction = direction.Normalized();
+  this->normal = normal.Normalized();
+  this->SetChanged();
+}
+
+template <size_t Tdimension, typename TElement>
+void tPlane<Tdimension, TElement>::Set(const typename tShape::tPoint &p1, const typename tShape::tPoint &p2, const typename tShape::tPoint &p3)
+{
+  this->support = p1;
+  this->normal = CrossProduct(p2 - p1, p3 - p1).Normalized();
   this->SetChanged();
 }
 
 //----------------------------------------------------------------------
-// tLine Evaluation: operator ()
+// tPlane Evaluation: operator ()
+//----------------------------------------------------------------------
+//template <size_t Tdimension, typename TElement>
+//const typename tShape<Tdimension, TElement>::tPoint tPlane<Tdimension, TElement>::operator()(tParameter t) const
+//{
+//  return math::tVector<Tdimension, TElement>(this->support + t * this->direction);
+//}
+
+//----------------------------------------------------------------------
+// tPlane GetDistanceToPoint
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-const typename tShape<Tdimension, TElement>::tPoint tLine<Tdimension, TElement>::operator()(tParameter t) const
+const TElement tPlane<Tdimension, TElement>::GetDistanceToPoint(const typename tShape::tPoint &point) const
 {
-  return math::tVector<Tdimension, TElement>(this->support + t * this->direction);
+  return math::AbsoluteValue(this->normal *(point - this->support));
 }
 
 //----------------------------------------------------------------------
-// tLine GetDistanceToPoint
+// tPlane GetNearestPoint
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-const TElement tLine<Tdimension, TElement>::GetDistanceToPoint(const typename tShape::tPoint &point) const
+const typename tShape<Tdimension, TElement>::tPoint tPlane<Tdimension, TElement>::GetNearestPoint(const typename tShape::tPoint &reference_point) const
 {
-  return (point - this->GetNearestPoint(point)).Length();
+  return -(this->normal *(reference_point - this->support)) * this->normal + reference_point;
 }
 
 //----------------------------------------------------------------------
-// tLine GetNearestPoint
+// tPlane Translate
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-const typename tShape<Tdimension, TElement>::tPoint tLine<Tdimension, TElement>::GetNearestPoint(const typename tShape::tPoint &reference_point) const
-{
-  //          reference_point
-  //                /|sin
-  //               / |
-  // -------support--F-----> direction
-  //               cos
-  math::tVector<Tdimension, TElement> support_to_reference(reference_point - this->support);
-  return math::tVector<Tdimension, TElement>((*this)(EnclosedAngle(this->direction, support_to_reference).Cosine() * support_to_reference.Length()));
-}
-
-namespace
-{
-
-template <size_t Tdimension, typename TElement>
-bool IntersectLineWithLine(typename tLine<Tdimension, TElement>::tPoint &intersection_point, const tLine<Tdimension, TElement> &left, const tLine<Tdimension, TElement> &right)
-{
-  math::tMatrix<Tdimension, 2, TElement> matrix;
-  for (size_t i = 0; i < Tdimension; ++i)
-  {
-    matrix[i][0] = left.Direction()[i];
-    matrix[i][1] = -right.Direction()[i];
-  }
-
-  try
-  {
-    TElement t = math::tLUDecomposition<2, TElement>(matrix).Solve(right.Support() - left.Support())[0];
-    intersection_point = left.Support() + t * left.Direction();
-    return true;
-  }
-  catch (const std::logic_error &)
-  {
-    return false;
-  }
-}
-
-template <size_t Tdimension, typename TElement>
-bool IntersectLineWithLineSegment(typename tLine<Tdimension, TElement>::tPoint &intersection_point, const tLine<Tdimension, TElement> &left, const geometry::tLineSegment<Tdimension, TElement> &right)
-{
-  if (!IntersectLineWithLine(intersection_point, left, right))
-  {
-    return false;
-  }
-  return math::IsEqual(right.GetDistanceToPoint(intersection_point), 0);
-}
-
-template <size_t Tdimension, typename TElement>
-bool IntersectLineSegmentWithLineSegment(typename tLine<Tdimension, TElement>::tPoint &intersection_point, const tLineSegment<Tdimension, TElement> &left, const tLineSegment<Tdimension, TElement> &right)
-{
-  if (!left.BoundingBox().Intersects(right.BoundingBox()))
-  {
-    return false;
-  }
-
-  if (!IntersectLineWithLineSegment(intersection_point, left, right))
-  {
-    return false;
-  }
-  return math::IsEqual(left.GetDistanceToPoint(intersection_point), 0);
-}
-
-}
-
-//----------------------------------------------------------------------
-// tLine GetIntersection
-//----------------------------------------------------------------------
-template <size_t Tdimension, typename TElement>
-const bool tLine<Tdimension, TElement>::GetIntersection(typename tShape::tPoint &intersection_point, const tLine &line) const
-{
-  typedef geometry::tLineSegment<Tdimension, TElement> tLineSegment;
-  if (const tLineSegment *this_segment = dynamic_cast<const tLineSegment *>(this))
-  {
-    if (const tLineSegment *line_segment = dynamic_cast<const tLineSegment *>(&line))
-    {
-      return IntersectLineSegmentWithLineSegment(intersection_point, *this_segment, *line_segment);
-    }
-    return IntersectLineWithLineSegment(intersection_point, line, *this_segment);
-  }
-  if (const tLineSegment *line_segment = dynamic_cast<const tLineSegment *>(&line))
-  {
-    return IntersectLineWithLineSegment(intersection_point, *this, *line_segment);
-  }
-  return IntersectLineWithLine(intersection_point, *this, line);
-}
-
-//----------------------------------------------------------------------
-// tLine Translate
-//----------------------------------------------------------------------
-template <size_t Tdimension, typename TElement>
-tLine<Tdimension, TElement> &tLine<Tdimension, TElement>::Translate(const math::tVector<Tdimension, TElement> &translation)
+tPlane<Tdimension, TElement> &tPlane<Tdimension, TElement>::Translate(const math::tVector<Tdimension, TElement> &translation)
 {
   this->support += translation;
   this->SetChanged();
@@ -216,23 +141,23 @@ tLine<Tdimension, TElement> &tLine<Tdimension, TElement>::Translate(const math::
 }
 
 //----------------------------------------------------------------------
-// tLine Rotate
+// tPlane Rotate
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-tLine<Tdimension, TElement> &tLine<Tdimension, TElement>::Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation)
+tPlane<Tdimension, TElement> &tPlane<Tdimension, TElement>::Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation)
 {
   assert(math::IsEqual(rotation.Determinant(), 0));
   this->support = rotation * this->support;
-  this->direction = rotation * this->direction;
+  this->normal = rotation * this->normal;
   this->SetChanged();
   return *this;
 }
 
 //----------------------------------------------------------------------
-// tLine Transform
+// tPlane Transform
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-tLine<Tdimension, TElement> &tLine<Tdimension, TElement>::Transform(const math::tMatrix < Tdimension + 1, Tdimension + 1, TElement > &transformation)
+tPlane<Tdimension, TElement> &tPlane<Tdimension, TElement>::Transform(const math::tMatrix < Tdimension + 1, Tdimension + 1, TElement > &transformation)
 {
 #ifndef NDEBUG
   for (size_t i = 0; i < Tdimension; ++i)
@@ -252,23 +177,23 @@ tLine<Tdimension, TElement> &tLine<Tdimension, TElement>::Transform(const math::
   assert(math::IsEqual(rotation.Determinant(), 0));
 
   this->support = transformation.MultiplyHomogeneously(this->support);
-  this->direction = rotation * this->direction;
+  this->normal = rotation * this->normal;
   this->SetChanged();
   return *this;
 }
 
 //----------------------------------------------------------------------
-// tLine UpdateBoundingBox
+// tPlane UpdateBoundingBox
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-void tLine<Tdimension, TElement>::UpdateBoundingBox(typename tShape::tBoundingBox &bounding_box) const
+void tPlane<Tdimension, TElement>::UpdateBoundingBox(typename tShape::tBoundingBox &bounding_box) const
 {}
 
 //----------------------------------------------------------------------
-// tLine UpdateCenterOfGravity
+// tPlane UpdateCenterOfGravity
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-void tLine<Tdimension, TElement>::UpdateCenterOfGravity(typename tShape::tPoint &center_of_gravity) const
+void tPlane<Tdimension, TElement>::UpdateCenterOfGravity(typename tShape::tPoint &center_of_gravity) const
 {
   center_of_gravity = this->GetNearestPoint(tShape::tPoint::Zero());
 }

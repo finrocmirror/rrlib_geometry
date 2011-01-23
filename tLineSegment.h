@@ -83,6 +83,7 @@ class tLineSegment : public tLine<Tdimension, TElement>
 //----------------------------------------------------------------------
 public:
 
+  tLineSegment();
   tLineSegment(const typename tShape::tPoint &begin, const typename tShape::tPoint &end);
 
   inline const typename tShape::tPoint &Begin() const

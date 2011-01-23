@@ -19,22 +19,22 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 //----------------------------------------------------------------------
-/*!\file    tLine.h
+/*!\file    tPlane.h
  *
  * \author  Tobias Foehst
  *
- * \date    2010-12-27
+ * \date    2011-01-19
  *
- * \brief   Contains tLine
+ * \brief   Contains tPlane
  *
- * \b tLine
+ * \b tPlane
  *
- * A few words for tLine
+ * A few words for tPlane
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_geometry_tLine_h_
-#define _rrlib_geometry_tLine_h_
+#ifndef _rrlib_geometry_tPlane_h_
+#define _rrlib_geometry_tPlane_h_
 
 #include "rrlib/geometry/tShape.h"
 //----------------------------------------------------------------------
@@ -64,12 +64,12 @@ namespace geometry
 //----------------------------------------------------------------------
 // Class declaration
 //----------------------------------------------------------------------
-//! Short description of tLine
-/*! A more detailed description of tLine, which
+//! Short description of tPlane
+/*! A more detailed description of tPlane, which
     Tobias Foehst hasn't done yet !!
 */
 template < size_t Tdimension, typename TElement = double >
-class tLine : public tShape<Tdimension, TElement>
+class tPlane : public tShape<3, TElement>
 {
 
   typedef geometry::tShape<Tdimension, TElement> tShape;
@@ -81,33 +81,32 @@ public:
 
   typedef typename tShape::tPoint::tElement tParameter;
 
-  tLine();
-  tLine(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &direction);
-  tLine(const typename tShape::tPoint &support, const typename tShape::tPoint &second_support);
+  tPlane();
+  tPlane(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &normal);
+  tPlane(const typename tShape::tPoint &p1, const typename tShape::tPoint &p2, const typename tShape::tPoint &p3);
 
   inline const typename tShape::tPoint &Support() const
   {
     return this->support;
   }
 
-  inline const math::tVector<Tdimension, TElement> &Direction() const
+  inline const math::tVector<Tdimension, TElement> &Normal() const
   {
-    return this->direction;
+    return this->normal;
   }
 
-  void Set(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &direction);
+  void Set(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &normal);
+  void Set(const typename tShape::tPoint &p1, const typename tShape::tPoint &p2, const typename tShape::tPoint &p3);
 
-  const typename tShape::tPoint operator()(tParameter t) const;
+//  const typename tShape::tPoint operator()(tParameter t) const;
 
   const TElement GetDistanceToPoint(const typename tShape::tPoint &point) const;
 
   virtual const typename tShape::tPoint GetNearestPoint(const typename tShape::tPoint &reference_point) const;
 
-  const bool GetIntersection(typename tShape::tPoint &intersection_point, const tLine &line) const;
-
-  virtual tLine &Translate(const math::tVector<Tdimension, TElement> &translation);
-  virtual tLine &Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation);
-  virtual tLine &Transform(const math::tMatrix < Tdimension + 1, Tdimension + 1, TElement > &transformation);
+  virtual tPlane &Translate(const math::tVector<Tdimension, TElement> &translation);
+  virtual tPlane &Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation);
+  virtual tPlane &Transform(const math::tMatrix < Tdimension + 1, Tdimension + 1, TElement > &transformation);
 
 //----------------------------------------------------------------------
 // Private fields and methods
@@ -115,31 +114,23 @@ public:
 private:
 
   typename tShape::tPoint support;
-  typename math::tVector<Tdimension, TElement> direction;
+  typename math::tVector<Tdimension, TElement> normal;
 
   virtual void UpdateBoundingBox(typename tShape::tBoundingBox &bounding_box) const;
   virtual void UpdateCenterOfGravity(typename tShape::tPoint &center_of_gravity) const;
 
 };
 
-typedef tLine<2, double> tLine2D;
-typedef tLine<3, double> tLine3D;
+typedef tPlane<3, double> tPlane3D;
 
 //----------------------------------------------------------------------
 // Explicit template instantiation
 //----------------------------------------------------------------------
 
-extern template class tLine<2, float>;
-extern template class tLine<3, float>;
+extern template class tPlane<3, float>;
+extern template class tPlane<3, double>;
 
-extern template class tLine<2, double>;
-extern template class tLine<3, double>;
 
-extern template class tLine<2, int>;
-extern template class tLine<3, int>;
-
-extern template class tLine<2, unsigned int>;
-extern template class tLine<3, unsigned int>;
 
 //----------------------------------------------------------------------
 // End of namespace declaration
@@ -148,6 +139,6 @@ extern template class tLine<3, unsigned int>;
 }
 
 
-#include "rrlib/geometry/tLine.hpp"
+#include "rrlib/geometry/tPlane.hpp"
 
 #endif

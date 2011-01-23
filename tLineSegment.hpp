@@ -66,6 +66,12 @@ namespace geometry
 // tLineSegment constructors
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
+tLineSegment<Tdimension, TElement>::tLineSegment()
+{
+  this->end[0] = 1;
+}
+
+template <size_t Tdimension, typename TElement>
 tLineSegment<Tdimension, TElement>::tLineSegment(const typename tShape::tPoint &begin, const typename tShape::tPoint &end)
     : tLine(begin, end - begin),
     end(end)

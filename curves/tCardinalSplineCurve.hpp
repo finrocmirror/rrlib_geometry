@@ -19,24 +19,15 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 //----------------------------------------------------------------------
-/*!\file    tLine.h
+/*!\file    tCardinalSplineCurve.hpp
  *
  * \author  Tobias Foehst
  *
- * \date    2010-12-27
- *
- * \brief   Contains tLine
- *
- * \b tLine
- *
- * A few words for tLine
+ * \date    2009-05-26
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_geometry_tLine_h_
-#define _rrlib_geometry_tLine_h_
 
-#include "rrlib/geometry/tShape.h"
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
 //----------------------------------------------------------------------
@@ -48,6 +39,7 @@
 //----------------------------------------------------------------------
 // Debugging
 //----------------------------------------------------------------------
+#include <cassert>
 
 //----------------------------------------------------------------------
 // Namespace declaration
@@ -62,92 +54,58 @@ namespace geometry
 //----------------------------------------------------------------------
 
 //----------------------------------------------------------------------
-// Class declaration
+// Const values
 //----------------------------------------------------------------------
-//! Short description of tLine
-/*! A more detailed description of tLine, which
-    Tobias Foehst hasn't done yet !!
-*/
-template < size_t Tdimension, typename TElement = double >
-class tLine : public tShape<Tdimension, TElement>
+
+//----------------------------------------------------------------------
+// Implementation
+//----------------------------------------------------------------------
+
+//----------------------------------------------------------------------
+// tCardinalSplineCurve constructor
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement>
+template <typename TIterator>
+tCardinalSplineCurve<Tdimension, TElement>::tCardinalSplineCurve(TIterator begin, TIterator end, double tension)
+    : tSplineCurve(begin, end),
+    tension(tension)
+{}
+
+template <size_t Tdimension, typename TElement>
+template <typename TSTLContainer>
+tCardinalSplineCurve<Tdimension, TElement>::tCardinalSplineCurve(const TSTLContainer &control_points, double tension)
+    : tSplineCurve(control_points),
+    tension(tension)
+{}
+
+//----------------------------------------------------------------------
+// tCardinalSplineCurve SetTension
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement>
+void tCardinalSplineCurve<Tdimension, TElement>::SetTension(double tension)
 {
-
-  typedef geometry::tShape<Tdimension, TElement> tShape;
-
-//----------------------------------------------------------------------
-// Public methods and typedefs
-//----------------------------------------------------------------------
-public:
-
-  typedef typename tShape::tPoint::tElement tParameter;
-
-  tLine();
-  tLine(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &direction);
-  tLine(const typename tShape::tPoint &support, const typename tShape::tPoint &second_support);
-
-  inline const typename tShape::tPoint &Support() const
-  {
-    return this->support;
-  }
-
-  inline const math::tVector<Tdimension, TElement> &Direction() const
-  {
-    return this->direction;
-  }
-
-  void Set(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &direction);
-
-  const typename tShape::tPoint operator()(tParameter t) const;
-
-  const TElement GetDistanceToPoint(const typename tShape::tPoint &point) const;
-
-  virtual const typename tShape::tPoint GetNearestPoint(const typename tShape::tPoint &reference_point) const;
-
-  const bool GetIntersection(typename tShape::tPoint &intersection_point, const tLine &line) const;
-
-  virtual tLine &Translate(const math::tVector<Tdimension, TElement> &translation);
-  virtual tLine &Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation);
-  virtual tLine &Transform(const math::tMatrix < Tdimension + 1, Tdimension + 1, TElement > &transformation);
+  this->tension = tension;
+  this->SetChanged();
+}
 
 //----------------------------------------------------------------------
-// Private fields and methods
+// tCardinalSplineCurve GetBezierCurveForSegment
 //----------------------------------------------------------------------
-private:
+template <size_t Tdimension, typename TElement>
+const typename tSplineCurve<Tdimension, TElement, 3>::tBezierCurve tCardinalSplineCurve<Tdimension, TElement>::GetBezierCurveForSegment(unsigned int i) const
+{
+  std::vector<typename tShape::tPoint> bezier_control_points;
 
-  typename tShape::tPoint support;
-  typename math::tVector<Tdimension, TElement> direction;
+  bezier_control_points.push_back(this->GetControlPoint(i + 1));
+  bezier_control_points.push_back(this->GetControlPoint(i + 1) + (1.0 - this->tension) / 2.0 *(this->GetControlPoint(i + 2) - this->GetControlPoint(i)));
+  bezier_control_points.push_back(this->GetControlPoint(i + 2) + (1.0 - this->tension) / 2.0 *(this->GetControlPoint(i + 1) - this->GetControlPoint(i + 3)));
+  bezier_control_points.push_back(this->GetControlPoint(i + 2));
 
-  virtual void UpdateBoundingBox(typename tShape::tBoundingBox &bounding_box) const;
-  virtual void UpdateCenterOfGravity(typename tShape::tPoint &center_of_gravity) const;
-
+  return typename tSplineCurve::tBezierCurve(bezier_control_points);
 };
-
-typedef tLine<2, double> tLine2D;
-typedef tLine<3, double> tLine3D;
-
-//----------------------------------------------------------------------
-// Explicit template instantiation
-//----------------------------------------------------------------------
-
-extern template class tLine<2, float>;
-extern template class tLine<3, float>;
-
-extern template class tLine<2, double>;
-extern template class tLine<3, double>;
-
-extern template class tLine<2, int>;
-extern template class tLine<3, int>;
-
-extern template class tLine<2, unsigned int>;
-extern template class tLine<3, unsigned int>;
 
 //----------------------------------------------------------------------
 // End of namespace declaration
 //----------------------------------------------------------------------
 }
 }
-
-
-#include "rrlib/geometry/tLine.hpp"
-
-#endif

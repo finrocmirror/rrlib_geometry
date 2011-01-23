@@ -40,9 +40,9 @@
 //----------------------------------------------------------------------
 #include "rrlib/geometry/tShape.h"
 #include "rrlib/geometry/tLine.h"
-#include "rrlib/geometry/tBezierCurve.h"
-#include "rrlib/geometry/tUniformBSplineCurve.h"
-#include "rrlib/geometry/tCardinalSplineCurve.h"
+#include "rrlib/geometry/curves/tBezierCurve.h"
+#include "rrlib/geometry/curves/tUniformBSplineCurve.h"
+#include "rrlib/geometry/curves/tCardinalSplineCurve.h"
 
 #include "rrlib/highgui_wrapper/tWindow.h"
 

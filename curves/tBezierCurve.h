@@ -19,31 +19,34 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 //----------------------------------------------------------------------
-/*!\file    tLine.h
+/*!\file    tBezierCurve.h
  *
  * \author  Tobias Foehst
  *
- * \date    2010-12-27
+ * \date    2009-05-25
  *
- * \brief   Contains tLine
+ * \brief   Contains tBezierCurve
  *
- * \b tLine
+ * \b tBezierCurve
  *
- * A few words for tLine
+ * A few words for tBezierCurve
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_geometry_tLine_h_
-#define _rrlib_geometry_tLine_h_
+#ifndef _rrlib_geometry_curves_tBezierCurve_h_
+#define _rrlib_geometry_curves_tBezierCurve_h_
 
 #include "rrlib/geometry/tShape.h"
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
 //----------------------------------------------------------------------
+#include <vector>
 
 //----------------------------------------------------------------------
 // Internal includes with ""
 //----------------------------------------------------------------------
+#include "rrlib/geometry/tLine.h"
+#include "rrlib/highgui_wrapper/tWindow.h"
 
 //----------------------------------------------------------------------
 // Debugging
@@ -64,13 +67,14 @@ namespace geometry
 //----------------------------------------------------------------------
 // Class declaration
 //----------------------------------------------------------------------
-//! Short description of tLine
-/*! A more detailed description of tLine, which
+//! Short description of tBezierCurve
+/*! A more detailed description of tBezierCurve, which
     Tobias Foehst hasn't done yet !!
 */
-template < size_t Tdimension, typename TElement = double >
-class tLine : public tShape<Tdimension, TElement>
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+class tBezierCurve : public tShape<Tdimension, TElement>
 {
+  friend class tBezierCurve < Tdimension, TElement, Tdegree + 1 >;
 
   typedef geometry::tShape<Tdimension, TElement> tShape;
 
@@ -79,67 +83,82 @@ class tLine : public tShape<Tdimension, TElement>
 //----------------------------------------------------------------------
 public:
 
+  static const unsigned int cDEGREE;
+  static const unsigned int cNUMBER_OF_CONTROL_POINTS;
+
   typedef typename tShape::tPoint::tElement tParameter;
 
-  tLine();
-  tLine(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &direction);
-  tLine(const typename tShape::tPoint &support, const typename tShape::tPoint &second_support);
+  typedef tBezierCurve < Tdimension, TElement, Tdegree - 1 > tDerivative;
+  typedef std::pair<tBezierCurve, tBezierCurve> tSubdivision;
 
-  inline const typename tShape::tPoint &Support() const
+  template <typename TIterator>
+  tBezierCurve(TIterator begin, TIterator end);
+
+  template <typename TSTLContainer>
+  explicit tBezierCurve(const TSTLContainer &control_points);
+
+  inline const typename tShape::tPoint &GetControlPoint(size_t i) const
   {
-    return this->support;
+    return this->control_points[i];
   }
 
-  inline const math::tVector<Tdimension, TElement> &Direction() const
-  {
-    return this->direction;
-  }
-
-  void Set(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &direction);
+  void SetControlPoint(size_t i, const typename tShape::tPoint &point);
 
   const typename tShape::tPoint operator()(tParameter t) const;
 
-  const TElement GetDistanceToPoint(const typename tShape::tPoint &point) const;
+  const TElement GetTwist() const;
 
-  virtual const typename tShape::tPoint GetNearestPoint(const typename tShape::tPoint &reference_point) const;
+  const tSubdivision GetSubdivision() const;
 
-  const bool GetIntersection(typename tShape::tPoint &intersection_point, const tLine &line) const;
+  const tDerivative GetDerivative() const;
 
-  virtual tLine &Translate(const math::tVector<Tdimension, TElement> &translation);
-  virtual tLine &Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation);
-  virtual tLine &Transform(const math::tMatrix < Tdimension + 1, Tdimension + 1, TElement > &transformation);
+  template <unsigned int Tother_degree>
+  const bool GetIntersections(std::vector<typename tShape::tPoint> &intersection_points, std::vector<tParameter> &intersection_parameters,
+                              const tBezierCurve<Tdimension, TElement, Tother_degree> &other) const;
+
+  const bool GetIntersections(std::vector<typename tShape::tPoint> &intersection_points, std::vector<tParameter> &intersection_parameters,
+                              const tLine<Tdimension, TElement> &line) const;
+
+  virtual tBezierCurve &Translate(const math::tVector<Tdimension, TElement> &translation);
+  virtual tBezierCurve &Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation);
+  virtual tBezierCurve &Transform(const math::tMatrix < Tdimension + 1, Tdimension + 1, TElement > &transformation);
 
 //----------------------------------------------------------------------
 // Private fields and methods
 //----------------------------------------------------------------------
 private:
 
-  typename tShape::tPoint support;
-  typename math::tVector<Tdimension, TElement> direction;
+  typename tShape::tPoint control_points[Tdegree + 1];
 
   virtual void UpdateBoundingBox(typename tShape::tBoundingBox &bounding_box) const;
   virtual void UpdateCenterOfGravity(typename tShape::tPoint &center_of_gravity) const;
 
-};
+  template <unsigned int Tother_degree>
+  const bool GetIntersections(std::vector<typename tShape::tPoint> &intersection_points, std::vector<tParameter> &intersection_parameters,
+                              const tBezierCurve<Tdimension, TElement, Tother_degree> &other,
+                              tParameter min_parameter, tParameter max_parameter) const;
 
-typedef tLine<2, double> tLine2D;
-typedef tLine<3, double> tLine3D;
+  const bool GetIntersections(std::vector<typename tShape::tPoint> &intersection_points, std::vector<tParameter> &intersection_parameters,
+                              const tLine<Tdimension, TElement> &line,
+                              tParameter min_parameter, tParameter max_parameter) const;
+
+};
 
 //----------------------------------------------------------------------
 // Explicit template instantiation
 //----------------------------------------------------------------------
 
-extern template class tLine<2, float>;
-extern template class tLine<3, float>;
+extern template class tBezierCurve<2, float, 2>;
+extern template class tBezierCurve<2, float, 3>;
 
-extern template class tLine<2, double>;
-extern template class tLine<3, double>;
+extern template class tBezierCurve<3, float, 2>;
+extern template class tBezierCurve<3, float, 3>;
 
-extern template class tLine<2, int>;
-extern template class tLine<3, int>;
+extern template class tBezierCurve<2, double, 2>;
+extern template class tBezierCurve<2, double, 3>;
 
-extern template class tLine<2, unsigned int>;
-extern template class tLine<3, unsigned int>;
+extern template class tBezierCurve<3, double, 2>;
+extern template class tBezierCurve<3, double, 3>;
 
 //----------------------------------------------------------------------
 // End of namespace declaration
@@ -148,6 +167,6 @@ extern template class tLine<3, unsigned int>;
 }
 
 
-#include "rrlib/geometry/tLine.hpp"
+#include "rrlib/geometry/curves/tBezierCurve.hpp"
 
 #endif
