@@ -33,8 +33,8 @@
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_geometry_curves_tBezierCurve_h_
-#define _rrlib_geometry_curves_tBezierCurve_h_
+#ifndef __rrlib__geometry__curves__tBezierCurve_h__
+#define __rrlib__geometry__curves__tBezierCurve_h__
 
 #include "rrlib/geometry/tShape.h"
 //----------------------------------------------------------------------
@@ -46,7 +46,6 @@
 // Internal includes with ""
 //----------------------------------------------------------------------
 #include "rrlib/geometry/tLine.h"
-#include "rrlib/highgui_wrapper/tWindow.h"
 
 //----------------------------------------------------------------------
 // Debugging

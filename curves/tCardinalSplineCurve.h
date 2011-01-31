@@ -33,8 +33,8 @@
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_geometry_curves_tCardinalSplineCurve_h_
-#define _rrlib_geometry_curves_tCardinalSplineCurve_h_
+#ifndef __rrlib__geometry__curves__tCardinalSplineCurve_h__
+#define __rrlib__geometry__curves__tCardinalSplineCurve_h__
 
 #include "rrlib/geometry/curves/tSplineCurve.h"
 //----------------------------------------------------------------------

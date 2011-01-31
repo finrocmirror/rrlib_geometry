@@ -35,6 +35,8 @@
 #include <iostream>
 #include <vector>
 
+#include "rrlib/highgui_wrapper/tWindow.h"
+
 //----------------------------------------------------------------------
 // Internal includes with ""
 //----------------------------------------------------------------------
@@ -43,8 +45,6 @@
 #include "rrlib/geometry/curves/tBezierCurve.h"
 #include "rrlib/geometry/curves/tUniformBSplineCurve.h"
 #include "rrlib/geometry/curves/tCardinalSplineCurve.h"
-
-#include "rrlib/highgui_wrapper/tWindow.h"
 
 //----------------------------------------------------------------------
 // Debugging

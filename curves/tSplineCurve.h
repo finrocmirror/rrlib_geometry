@@ -33,8 +33,8 @@
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_geometry_curves_tSplineCurve_h_
-#define _rrlib_geometry_curves_tSplineCurve_h_
+#ifndef __rrlib__geometry__curves__tSplineCurve_h__
+#define __rrlib__geometry__curves__tSplineCurve_h__
 
 #include "rrlib/geometry/tShape.h"
 //----------------------------------------------------------------------

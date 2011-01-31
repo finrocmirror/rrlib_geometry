@@ -33,8 +33,8 @@
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_geometry_tBoundingBox_h_
-#define _rrlib_geometry_tBoundingBox_h_
+#ifndef __rrlib__geometry__tBoundingBox_h__
+#define __rrlib__geometry__tBoundingBox_h__
 
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")

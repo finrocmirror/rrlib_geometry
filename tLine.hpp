@@ -31,13 +31,12 @@
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
 //----------------------------------------------------------------------
+#include "rrlib/math/utilities.h"
+#include "rrlib/math/tLUDecomposition.h"
 
 //----------------------------------------------------------------------
 // Internal includes with ""
 //----------------------------------------------------------------------
-#include "rrlib/math/utilities.h"
-#include "rrlib/math/tLUDecomposition.h"
-
 #include "rrlib/geometry/tLineSegment.h"
 
 //----------------------------------------------------------------------

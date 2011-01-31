@@ -33,10 +33,10 @@
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_geometry_tLineSegment_h_
-#define _rrlib_geometry_tLineSegment_h_
+#ifndef __rrlib__geometry__tLineSegment_h__
+#define __rrlib__geometry__tLineSegment_h__
 
-#ifndef _rrlib_geometry_tLine_h_
+#ifndef __rrlib__geometry__tLine_h__
 #error Invalid include directive. Try #include "rrlib/geometry/tLine.h" instead.
 #endif
 

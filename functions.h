@@ -33,8 +33,8 @@
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_geometry_functions_h_
-#define _rrlib_geometry_functions_h_
+#ifndef __rrlib__geometry__functions_h__
+#define __rrlib__geometry__functions_h__
 
 //----------------------------------------------------------------------
 // External includes with <>

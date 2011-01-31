@@ -33,11 +33,10 @@
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_geometry_tPoint_h_
-#define _rrlib_geometry_tPoint_h_
+#ifndef __rrlib__geometry__tPoint_h__
+#define __rrlib__geometry__tPoint_h__
 
 #include "rrlib/math/tVector.h"
-
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
 //----------------------------------------------------------------------

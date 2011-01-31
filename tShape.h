@@ -33,19 +33,18 @@
  *
  */
 //----------------------------------------------------------------------
-#ifndef _rrlib_geometry_tShape_h_
-#define _rrlib_geometry_tShape_h_
+#ifndef __rrlib__geometry__tShape_h__
+#define __rrlib__geometry__tShape_h__
 
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
 //----------------------------------------------------------------------
+#include "rrlib/math/tVector.h"
+#include "rrlib/math/tMatrix.h"
 
 //----------------------------------------------------------------------
 // Internal includes with ""
 //----------------------------------------------------------------------
-#include "rrlib/math/tVector.h"
-#include "rrlib/math/tMatrix.h"
-
 #include "rrlib/geometry/tPoint.h"
 #include "rrlib/geometry/tBoundingBox.h"
 
