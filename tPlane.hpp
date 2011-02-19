@@ -87,7 +87,7 @@ tPlane<Tdimension, TElement>::tPlane(const typename tShape::tPoint &p1, const ty
 // tPlane Set
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-void tPlane<Tdimension, TElement>::Set(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &direction)
+void tPlane<Tdimension, TElement>::Set(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &normal)
 {
   this->support = support;
   this->normal = normal.Normalized();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <targets>
 
-  <rrlib name="geometry">
+  <rrlib name="geometry_basic_shapes">
     <sources>
       tBoundingBox.h
       tLine.cpp
@@ -9,6 +9,11 @@
       tPlane.cpp
       tPoint.cpp
       tShape.h
+    </sources>
+  </rrlib>
+
+  <rrlib name="geometry_curves">
+    <sources>
       curves/*
     </sources>
   </rrlib>
