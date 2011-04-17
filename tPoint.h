@@ -79,12 +79,12 @@ class tPoint : public rrlib::math::tVector<Tdimension, TElement, rrlib::math::ve
 public:
 
   inline tPoint() : tVector() {}
-  inline tPoint(const tPoint &other) : tVector(other) {}
+  inline tPoint(const tPoint &other) : tVector(*reinterpret_cast<const tVector *>(&other)) {}
 
   inline tPoint(const tVector &vector) : tVector(vector) {}
 
   template <typename ... TValues>
-  explicit inline tPoint(TElement value, TValues... values) : tVector(value, values...) {}
+  explicit inline tPoint(TValues... values) : tVector(values...) {}
 
   inline tPoint &operator = (const tPoint &other)
   {
