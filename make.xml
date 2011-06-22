@@ -26,11 +26,4 @@
     </sources>
   </testprogram>
 
-  <testprogram name="bezier_derivatives"
-      libs="opencv_all">
-    <sources>
-      test/test_bezier_derivatives.cpp
-    </sources>
-  </testprogram>
-
 </targets>
