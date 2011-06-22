@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE targets PUBLIC "-//RRLIB//DTD make 1.0" "http://rrlib.org/xml/1.0/make.dtd">
 <targets>
 
   <rrlib name="geometry_basic_shapes">
     <sources>
+      functions.h
       tBoundingBox.h
       tLine.cpp
       tLineSegment.cpp
@@ -21,6 +23,13 @@
   <testprogram name="geometries">
     <sources>
       test/test_geometries.cpp
+    </sources>
+  </testprogram>
+
+  <testprogram name="bezier_derivatives"
+      libs="opencv_all">
+    <sources>
+      test/test_bezier_derivatives.cpp
     </sources>
   </testprogram>
 
