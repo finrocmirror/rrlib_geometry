@@ -101,7 +101,7 @@ public:
 
   const TElement GetDistanceToPoint(const typename tShape::tPoint &point) const;
 
-  virtual const typename tShape::tPoint GetNearestPoint(const typename tShape::tPoint &reference_point) const;
+  virtual const typename tShape::tPoint GetClosestPoint(const typename tShape::tPoint &reference_point) const;
 
   const bool GetIntersection(typename tShape::tPoint &intersection_point, const tLine &line) const;
 

@@ -111,14 +111,14 @@ const typename tShape<Tdimension, TElement>::tPoint tLine<Tdimension, TElement>:
 template <size_t Tdimension, typename TElement>
 const TElement tLine<Tdimension, TElement>::GetDistanceToPoint(const typename tShape::tPoint &point) const
 {
-  return (point - this->GetNearestPoint(point)).Length();
+  return (point - this->GetClosestPoint(point)).Length();
 }
 
 //----------------------------------------------------------------------
-// tLine GetNearestPoint
+// tLine GetClosestPoint
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-const typename tShape<Tdimension, TElement>::tPoint tLine<Tdimension, TElement>::GetNearestPoint(const typename tShape::tPoint &reference_point) const
+const typename tShape<Tdimension, TElement>::tPoint tLine<Tdimension, TElement>::GetClosestPoint(const typename tShape::tPoint &reference_point) const
 {
   //          reference_point
   //                /|sin
@@ -269,7 +269,7 @@ void tLine<Tdimension, TElement>::UpdateBoundingBox(typename tShape::tBoundingBo
 template <size_t Tdimension, typename TElement>
 void tLine<Tdimension, TElement>::UpdateCenterOfGravity(typename tShape::tPoint &center_of_gravity) const
 {
-  center_of_gravity = this->GetNearestPoint(tShape::tPoint::Zero());
+  center_of_gravity = this->GetClosestPoint(tShape::tPoint::Zero());
 }
 
 //----------------------------------------------------------------------

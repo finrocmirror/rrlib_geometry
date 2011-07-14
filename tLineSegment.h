@@ -102,9 +102,12 @@ public:
     return this->CenterOfGravity();
   }
 
-  const TElement Length() const;
+  inline const TElement Length() const
+  {
+    return (this->Begin() - this->End()).Length();
+  }
 
-  virtual const typename tShape::tPoint GetNearestPoint(const typename tShape::tPoint &reference_point) const;
+  virtual const typename tShape::tPoint GetClosestPoint(const typename tShape::tPoint &reference_point) const;
 
   virtual tLineSegment &Translate(const math::tVector<Tdimension, TElement> &translation);
   virtual tLineSegment &Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation);

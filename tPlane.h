@@ -102,7 +102,7 @@ public:
 
   const TElement GetDistanceToPoint(const typename tShape::tPoint &point) const;
 
-  virtual const typename tShape::tPoint GetNearestPoint(const typename tShape::tPoint &reference_point) const;
+  virtual const typename tShape::tPoint GetClosestPoint(const typename tShape::tPoint &reference_point) const;
 
   virtual tPlane &Translate(const math::tVector<Tdimension, TElement> &translation);
   virtual tPlane &Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation);

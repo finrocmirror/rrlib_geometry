@@ -88,10 +88,10 @@ void tLineSegment<Tdimension, TElement>::Set(const typename tShape::tPoint &begi
 }
 
 //----------------------------------------------------------------------
-// tLineSegment GetNearestPoint
+// tLineSegment GetClosestPoint
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-const typename tShape<Tdimension, TElement>::tPoint tLineSegment<Tdimension, TElement>::GetNearestPoint(const typename tShape::tPoint &reference_point) const
+const typename tShape<Tdimension, TElement>::tPoint tLineSegment<Tdimension, TElement>::GetClosestPoint(const typename tShape::tPoint &reference_point) const
 {
   math::tVector<Tdimension, TElement> from_begin_to_point(reference_point - this->Begin());
   math::tVector<Tdimension, TElement> from_end_to_point(reference_point - this->End());
@@ -102,13 +102,13 @@ const typename tShape<Tdimension, TElement>::tPoint tLineSegment<Tdimension, TEl
     return this->Begin();
   }
 
-  // angle between direction and vecot end->point larger than 90°
+  // angle between direction and vector end->point larger than 90°
   if (from_end_to_point * this->Direction() > 0)
   {
     return this->End();
   }
 
-  return tLine::GetNearestPoint(reference_point);
+  return tLine::GetClosestPoint(reference_point);
 }
 
 //----------------------------------------------------------------------

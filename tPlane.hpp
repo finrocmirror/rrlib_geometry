@@ -121,10 +121,10 @@ const TElement tPlane<Tdimension, TElement>::GetDistanceToPoint(const typename t
 }
 
 //----------------------------------------------------------------------
-// tPlane GetNearestPoint
+// tPlane GetClosestPoint
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-const typename tShape<Tdimension, TElement>::tPoint tPlane<Tdimension, TElement>::GetNearestPoint(const typename tShape::tPoint &reference_point) const
+const typename tShape<Tdimension, TElement>::tPoint tPlane<Tdimension, TElement>::GetClosestPoint(const typename tShape::tPoint &reference_point) const
 {
   return -(this->normal *(reference_point - this->support)) * this->normal + reference_point;
 }
@@ -195,7 +195,7 @@ void tPlane<Tdimension, TElement>::UpdateBoundingBox(typename tShape::tBoundingB
 template <size_t Tdimension, typename TElement>
 void tPlane<Tdimension, TElement>::UpdateCenterOfGravity(typename tShape::tPoint &center_of_gravity) const
 {
-  center_of_gravity = this->GetNearestPoint(tShape::tPoint::Zero());
+  center_of_gravity = this->GetClosestPoint(tShape::tPoint::Zero());
 }
 
 //----------------------------------------------------------------------
