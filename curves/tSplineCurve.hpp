@@ -223,6 +223,30 @@ void tSplineCurve<Tdimension, TElement, Tdegree>::GetIntersections(std::vector<t
 }
 
 //----------------------------------------------------------------------
+// tSplineCurve GetClosestPoint
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+const typename tShape<Tdimension, TElement>::tPoint tSplineCurve<Tdimension, TElement, Tdegree>::GetClosestPoint(const typename tShape::tPoint &reference_point) const
+{
+  typename tShape::tPoint closest_point = this->GetBezierCurveForSegment(0).GetClosestPoint(reference_point);
+  double min_distance = (closest_point - reference_point).Length();
+
+  for (size_t i = 1; i < this->GetNumberOfSegments(); ++i)
+  {
+    typename tShape::tPoint candidate = this->GetBezierCurveForSegment(i).GetClosestPoint(reference_point);
+    double distance = (candidate - reference_point).Length();
+
+    if (distance < min_distance)
+    {
+      min_distance = distance;
+      closest_point = candidate;
+    }
+  }
+
+  return closest_point;
+}
+
+//----------------------------------------------------------------------
 // tSplineCurve Translate
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>

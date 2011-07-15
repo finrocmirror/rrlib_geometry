@@ -293,6 +293,39 @@ const bool tBezierCurve<Tdimension, TElement, Tdegree>::GetIntersections(std::ve
 }
 
 //----------------------------------------------------------------------
+// tBezierCurve GetClosestPoint
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+const typename tShape<Tdimension, TElement>::tPoint tBezierCurve<Tdimension, TElement, Tdegree>::GetClosestPoint(const typename tShape::tPoint &reference_point) const
+{
+  tSubdivision subdivision(this->GetSubdivision());
+
+  tLineSegment<Tdimension, TElement> first_segment_base_line(subdivision.first.GetControlPoint(0), subdivision.first.GetControlPoint(Tdegree));
+  tLineSegment<Tdimension, TElement> second_segment_base_line(subdivision.second.GetControlPoint(0), subdivision.second.GetControlPoint(Tdegree));
+
+  typename tShape::tPoint first_candidate = first_segment_base_line.GetClosestPoint(reference_point);
+  typename tShape::tPoint second_candidate = second_segment_base_line.GetClosestPoint(reference_point);
+
+  double squared_distance_to_first_candidate = (reference_point - first_candidate).SquaredLength();
+  double squared_distance_to_second_candidate = (reference_point - second_candidate).SquaredLength();
+
+  if (squared_distance_to_first_candidate < squared_distance_to_second_candidate)
+  {
+    if (subdivision.first.GetTwist() < 1E-6)
+    {
+      return first_candidate;
+    }
+    return subdivision.first.GetClosestPoint(reference_point);
+  }
+
+  if (subdivision.second.GetTwist() < 1E-6)
+  {
+    return second_candidate;
+  }
+  return subdivision.second.GetClosestPoint(reference_point);
+}
+
+//----------------------------------------------------------------------
 // tBezierCurve Translate
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>

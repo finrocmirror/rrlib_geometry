@@ -283,7 +283,6 @@ int main(int argc, char **argv)
   control_points.push_back(tPoint(0.7, 0.6));
   control_points.push_back(tPoint(0.9, 0.4));
 
-
   tConcreteSplineCurve spline(control_points);
 
   window.Clear();
@@ -379,7 +378,47 @@ int main(int argc, char **argv)
   }
   window.Render();
 
+  std::cout << std::endl << "=== Closest point to Bezier curve ===" << std::endl;
 
+  window.Clear();
+  window.SetColor(0);
+  DrawBezierCurve(window, bezier_curve);
+  window.Render();
+
+  for (int i = 0; i < 10; ++i)
+  {
+    tPoint reference_point(drand48(), drand48());
+    tPoint closest_point(bezier_curve.GetClosestPoint(reference_point));
+
+    window.SetColor(3);
+    DrawLineSegment(window, tLineSegment(reference_point, closest_point));
+    window.SetColor(1);
+    DrawPoint(window, reference_point);
+    window.SetColor(2);
+    DrawPoint(window, closest_point);
+    window.Render();
+  }
+
+  std::cout << std::endl << "=== Closest point to spline curve ===" << std::endl;
+
+  window.Clear();
+  window.SetColor(0);
+  DrawSplineCurve(window, spline);
+  window.Render();
+
+  for (int i = 0; i < 10; ++i)
+  {
+    tPoint reference_point(drand48(), drand48());
+    tPoint closest_point(spline.GetClosestPoint(reference_point));
+
+    window.SetColor(3);
+    DrawLineSegment(window, tLineSegment(reference_point, closest_point));
+    window.SetColor(1);
+    DrawPoint(window, reference_point);
+    window.SetColor(2);
+    DrawPoint(window, closest_point);
+    window.Render();
+  }
 
   window.Render();
 

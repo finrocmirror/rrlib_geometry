@@ -118,6 +118,8 @@ public:
   const bool GetIntersections(std::vector<typename tShape::tPoint> &intersection_points, std::vector<tParameter> &intersection_parameters,
                               const tLine<Tdimension, TElement> &line) const;
 
+  const typename tShape::tPoint GetClosestPoint(const typename tShape::tPoint &reference_point) const;
+
   virtual tBezierCurve &Translate(const math::tVector<Tdimension, TElement> &translation);
   virtual tBezierCurve &Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation);
   virtual tBezierCurve &Transform(const math::tMatrix < Tdimension + 1, Tdimension + 1, TElement > &transformation);
