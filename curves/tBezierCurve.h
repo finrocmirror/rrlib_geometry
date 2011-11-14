@@ -82,8 +82,15 @@ class tBezierCurve : public tShape<Tdimension, TElement>
 //----------------------------------------------------------------------
 public:
 
-  static const unsigned int cDEGREE;
-  static const unsigned int cNUMBER_OF_CONTROL_POINTS;
+  static inline const unsigned int Degree()
+  {
+    return Tdegree;
+  }
+
+  static inline const unsigned int NumberOfControlPoints()
+  {
+    return Tdegree + 1;
+  }
 
   typedef typename tShape::tPoint::tElement tParameter;
 

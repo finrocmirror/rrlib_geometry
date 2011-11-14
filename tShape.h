@@ -80,7 +80,10 @@ class tShape
 //----------------------------------------------------------------------
 public:
 
-  static const size_t cDIMENSION;
+  static inline const size_t Dimension()
+  {
+    return Tdimension;
+  }
 
   typedef geometry::tPoint<Tdimension, TElement> tPoint;
   typedef geometry::tBoundingBox<Tdimension, TElement> tBoundingBox;

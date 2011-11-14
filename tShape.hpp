@@ -56,8 +56,6 @@ namespace geometry
 //----------------------------------------------------------------------
 // Const values
 //----------------------------------------------------------------------
-template <size_t Tdimension, typename TElement>
-const size_t tShape<Tdimension, TElement>::cDIMENSION = Tdimension;
 
 //----------------------------------------------------------------------
 // Implementation

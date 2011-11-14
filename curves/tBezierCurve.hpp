@@ -56,11 +56,6 @@ namespace geometry
 //----------------------------------------------------------------------
 // Const values
 //----------------------------------------------------------------------
-template <size_t Tdimension, typename TElement, unsigned int Tdegree>
-const unsigned int tBezierCurve<Tdimension, TElement, Tdegree>::cDEGREE = Tdegree;
-
-template <size_t Tdimension, typename TElement, unsigned int Tdegree>
-const unsigned int tBezierCurve<Tdimension, TElement, Tdegree>::cNUMBER_OF_CONTROL_POINTS = Tdegree + 1;
 
 //----------------------------------------------------------------------
 // Implementation
@@ -75,7 +70,7 @@ tBezierCurve<Tdimension, TElement, Tdegree>::tBezierCurve(TIterator begin, TIter
     : tShape()
 {
   static_assert(Tdegree > 0, "The degree of Bezier curves must be greater than zero");
-  assert(static_cast<size_t>(std::distance(begin, end)) == this->cNUMBER_OF_CONTROL_POINTS);
+  assert(static_cast<size_t>(std::distance(begin, end)) == this->NumberOfControlPoints());
   size_t index = 0;
   for (TIterator it = begin; it != end; ++it)
   {
@@ -87,8 +82,11 @@ template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 template <typename TSTLContainer>
 tBezierCurve<Tdimension, TElement, Tdegree>::tBezierCurve(const TSTLContainer &control_points)
 {
+  std::cout << "control_points: " << control_points.size() << std::endl;
+  std::cout << "degree: " << Tdegree << std::endl;
+  std::cout << "expected number of points: " << this->NumberOfControlPoints() << std::endl;
   static_assert(Tdegree > 0, "The degree of Bezier curves must be greater than zero");
-  assert(control_points.size() == this->cNUMBER_OF_CONTROL_POINTS);
+  assert(control_points.size() == this->NumberOfControlPoints());
   for (size_t i = 0; i < control_points.size(); ++i)
   {
     this->control_points[i] = control_points[i];
@@ -101,7 +99,7 @@ tBezierCurve<Tdimension, TElement, Tdegree>::tBezierCurve(const TSTLContainer &c
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 void tBezierCurve<Tdimension, TElement, Tdegree>::SetControlPoint(size_t i, const typename tShape::tPoint &point)
 {
-  assert(i < this->cNUMBER_OF_CONTROL_POINTS);
+  assert(i < this->NumberOfControlPoints());
   this->control_points[i] = point;
   this->SetChanged();
 };
@@ -126,10 +124,10 @@ const TElement tBezierCurve<Tdimension, TElement, Tdegree>::GetTwist() const
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 const typename tBezierCurve<Tdimension, TElement, Tdegree>::tSubdivision tBezierCurve<Tdimension, TElement, Tdegree>::GetSubdivision() const
 {
-  typename tShape::tPoint left_half[this->cNUMBER_OF_CONTROL_POINTS];
-  typename tShape::tPoint right_half[this->cNUMBER_OF_CONTROL_POINTS];
-  typename tShape::tPoint temp_points[this->cNUMBER_OF_CONTROL_POINTS];
-  std::memcpy(temp_points, this->control_points, this->cNUMBER_OF_CONTROL_POINTS * sizeof(typename tShape::tPoint));
+  typename tShape::tPoint left_half[this->NumberOfControlPoints()];
+  typename tShape::tPoint right_half[this->NumberOfControlPoints()];
+  typename tShape::tPoint temp_points[this->NumberOfControlPoints()];
+  std::memcpy(temp_points, this->control_points, this->NumberOfControlPoints() * sizeof(typename tShape::tPoint));
 
   left_half[0] = temp_points[0];
   right_half[Tdegree] = temp_points[Tdegree];
@@ -146,7 +144,7 @@ const typename tBezierCurve<Tdimension, TElement, Tdegree>::tSubdivision tBezier
     right_half[Tdegree - k] = temp_points[Tdegree - k];
   }
 
-  return std::make_pair(tBezierCurve(left_half, left_half + this->cNUMBER_OF_CONTROL_POINTS), tBezierCurve(right_half, right_half + this->cNUMBER_OF_CONTROL_POINTS));
+  return std::make_pair(tBezierCurve(left_half, left_half + this->NumberOfControlPoints()), tBezierCurve(right_half, right_half + this->NumberOfControlPoints()));
 }
 
 //----------------------------------------------------------------------
@@ -157,8 +155,8 @@ const typename tShape<Tdimension, TElement>::tPoint tBezierCurve<Tdimension, TEl
 {
   assert((0.0 <= t) && (t <= 1.0));
 
-  typename tShape::tPoint temp_points[this->cNUMBER_OF_CONTROL_POINTS];
-  std::memcpy(temp_points, this->control_points, (this->cNUMBER_OF_CONTROL_POINTS) * sizeof(typename tShape::tPoint));
+  typename tShape::tPoint temp_points[this->NumberOfControlPoints()];
+  std::memcpy(temp_points, this->control_points, (this->NumberOfControlPoints()) * sizeof(typename tShape::tPoint));
 
   size_t k = 0;
   while (k < Tdegree)
@@ -331,7 +329,7 @@ const typename tShape<Tdimension, TElement>::tPoint tBezierCurve<Tdimension, TEl
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 tBezierCurve<Tdimension, TElement, Tdegree> &tBezierCurve<Tdimension, TElement, Tdegree>::Translate(const math::tVector<Tdimension, TElement> &translation)
 {
-  for (size_t i = 0; i < this->cNUMBER_OF_CONTROL_POINTS; ++i)
+  for (size_t i = 0; i < this->NumberOfControlPoints(); ++i)
   {
     this->control_points[i] += translation;
   }
@@ -345,7 +343,7 @@ tBezierCurve<Tdimension, TElement, Tdegree> &tBezierCurve<Tdimension, TElement, 
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 tBezierCurve<Tdimension, TElement, Tdegree> &tBezierCurve<Tdimension, TElement, Tdegree>::Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation)
 {
-  for (size_t i = 0; i < this->cNUMBER_OF_CONTROL_POINTS; ++i)
+  for (size_t i = 0; i < this->NumberOfControlPoints(); ++i)
   {
     this->control_points[i] = rotation * this->control_points[i];
   }
@@ -376,7 +374,7 @@ tBezierCurve<Tdimension, TElement, Tdegree> &tBezierCurve<Tdimension, TElement, 
   assert(math::IsEqual(rotation.Determinant(), 0));
 #endif
 
-  for (size_t i = 0; i < this->cNUMBER_OF_CONTROL_POINTS; ++i)
+  for (size_t i = 0; i < this->NumberOfControlPoints(); ++i)
   {
     this->control_points[i] = transformation.MultiplyHomogeneously(this->control_points[i]);
   }
@@ -390,7 +388,7 @@ tBezierCurve<Tdimension, TElement, Tdegree> &tBezierCurve<Tdimension, TElement, 
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 void tBezierCurve<Tdimension, TElement, Tdegree>::UpdateBoundingBox(typename tShape::tBoundingBox &bounding_box) const
 {
-  for (size_t i = 0; i < this->cNUMBER_OF_CONTROL_POINTS; ++i)
+  for (size_t i = 0; i < this->NumberOfControlPoints(); ++i)
   {
     bounding_box.Add(this->control_points[i]);
   }
@@ -402,11 +400,11 @@ void tBezierCurve<Tdimension, TElement, Tdegree>::UpdateBoundingBox(typename tSh
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 void tBezierCurve<Tdimension, TElement, Tdegree>::UpdateCenterOfGravity(typename tShape::tPoint &center_of_gravity) const
 {
-  for (size_t i = 0; i < this->cNUMBER_OF_CONTROL_POINTS; ++i)
+  for (size_t i = 0; i < this->NumberOfControlPoints(); ++i)
   {
     center_of_gravity += this->control_points[i];
   }
-  center_of_gravity /= this->cNUMBER_OF_CONTROL_POINTS;
+  center_of_gravity /= this->NumberOfControlPoints();
 }
 
 

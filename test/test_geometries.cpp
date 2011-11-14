@@ -45,6 +45,7 @@
 #include "rrlib/geometry/curves/tBezierCurve.h"
 #include "rrlib/geometry/curves/tUniformBSplineCurve.h"
 #include "rrlib/geometry/curves/tCardinalSplineCurve.h"
+#include "rrlib/geometry/functions.h"
 
 //----------------------------------------------------------------------
 // Debugging
@@ -116,7 +117,7 @@ void DrawControlPoints(tWindow &window, const std::vector<tPoint> &data)
 
 void DrawControlPolygon(tWindow &window, const tBezierCurve &bezier_curve)
 {
-  for (size_t i = 1; i < bezier_curve.cNUMBER_OF_CONTROL_POINTS; ++i)
+  for (size_t i = 1; i < bezier_curve.NumberOfControlPoints(); ++i)
   {
     const tPoint &start(bezier_curve.GetControlPoint(i - 1));
     const tPoint &stop(bezier_curve.GetControlPoint(i));
@@ -187,7 +188,7 @@ int main(int argc, char **argv)
   control_points.push_back(tPoint(0.1, 0.2));
   control_points.push_back(tPoint(0.3, 0.5));
   control_points.push_back(tPoint(0.7, 0.6));
-  control_points.push_back(tPoint(0.9, 0.4));
+  control_points.push_back(tPoint(0.5, 0.2));
 
   window.Clear();
   window.SetColor(0);
@@ -210,6 +211,30 @@ int main(int argc, char **argv)
   window.SetColor(3);
   DrawBezierCurve(window, bezier_curve);
   window.Render();
+
+
+  for (int i = 0; i <= 100; ++i)
+  {
+    double t = i / 100.0;
+    tPoint p = bezier_curve(t);
+    window.Clear();
+    DrawBezierCurve(window, bezier_curve);
+    DrawPoint(window, p);
+
+    double curvature = rrlib::geometry::GetCurvature(bezier_curve, t);
+    if (curvature > 0.0)
+    {
+      double radius = 1.0 / curvature;
+
+      tBezierCurve::tDerivative first(bezier_curve.GetDerivative());
+      tPoint m(p + (first(t).Normalized().Rotated(-M_PI_2) * radius));
+
+      window.SetColor(1);
+      window.DrawCircleNormalized(m.X(), m.Y(), radius, false);
+    }
+
+    window.Render();
+  }
 
   std::cout << std::endl << "=== Bezier curve intersects line ===" << std::endl;
 

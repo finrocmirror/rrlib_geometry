@@ -41,6 +41,8 @@
 //----------------------------------------------------------------------
 #include <cmath>
 
+#include <boost/utility/enable_if.hpp>
+
 //----------------------------------------------------------------------
 // Internal includes with ""
 //----------------------------------------------------------------------
@@ -62,8 +64,23 @@ namespace geometry
 template <typename TElement>
 inline const math::tAngleRad GetSlope(const tLineSegment<2, TElement> &line_segment)
 {
-  return std::atan2(line.End().Y() - line.Begin().Y(), line.End().X() - line.Begin().X());
+  return std::atan2(line_segment.End().Y() - line_segment.Begin().Y(), line_segment.End().X() - line_segment.Begin().X());
 }
+
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+inline const typename boost::enable_if_c<(Tdimension <= 3), double>::type GetCurvature(const tBezierCurve<Tdimension, TElement, Tdegree> &curve, TElement parameter)
+{
+  typename tBezierCurve<Tdimension, TElement, Tdegree>::tDerivative first_derivative(curve.GetDerivative());
+  typename tBezierCurve<Tdimension, TElement, Tdegree>::tDerivative::tDerivative second_derivative(first_derivative.GetDerivative());
+
+  math::tVector<3, TElement, math::vector::Cartesian> first(first_derivative(parameter));
+  math::tVector<3, TElement, math::vector::Cartesian> second(second_derivative(parameter));
+  double first_length = first.Length();
+
+  return CrossProduct(first, second).Length() / (first_length * first_length * first_length);
+}
+
+
 
 //----------------------------------------------------------------------
 // End of namespace declaration
