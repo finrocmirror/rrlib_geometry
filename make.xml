@@ -20,9 +20,21 @@
     </sources>
   </rrlib>
 
+  <rrlib name="geometry_space_partitioning">
+    <sources>
+      space_partitioning/*
+    </sources>
+  </rrlib>
+
   <testprogram name="geometries">
     <sources>
       test/test_geometries.cpp
+    </sources>
+  </testprogram>
+
+  <testprogram name="kd_tree">
+    <sources>
+      test/test_kd_tree.cpp
     </sources>
   </testprogram>
 

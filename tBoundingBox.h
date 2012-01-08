@@ -81,6 +81,9 @@ public:
 
   tBoundingBox();
 
+  template <typename TIterator>
+  tBoundingBox(TIterator begin, TIterator end);
+
   inline const tPoint &Min() const
   {
     return this->min;
@@ -94,6 +97,9 @@ public:
   void Reset();
 
   void Add(const tPoint &point);
+
+  template <typename TIterator>
+  void Add(TIterator begin, TIterator end);
 
   void Add(const tBoundingBox &other);
 

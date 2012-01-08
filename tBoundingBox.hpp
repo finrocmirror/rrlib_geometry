@@ -71,6 +71,14 @@ tBoundingBox<Tdimension, TElement>::tBoundingBox()
   this->Reset();
 }
 
+template <size_t Tdimension, typename TElement>
+template <typename TIterator>
+tBoundingBox<Tdimension, TElement>::tBoundingBox(TIterator begin, TIterator end)
+{
+  this->Reset();
+  this->Add(begin, end);
+}
+
 //----------------------------------------------------------------------
 // tBoundingBox Reset
 //----------------------------------------------------------------------
@@ -91,6 +99,16 @@ void tBoundingBox<Tdimension, TElement>::Add(const tPoint &point)
   {
     this->min[i] = std::min(this->min[i], point[i]);
     this->max[i] = std::max(this->max[i], point[i]);
+  }
+}
+
+template <size_t Tdimension, typename TElement>
+template <typename TIterator>
+void tBoundingBox<Tdimension, TElement>::Add(TIterator begin, TIterator end)
+{
+  for (auto it = begin; it != end; ++it)
+  {
+    this->Add(*it);
   }
 }
 
