@@ -146,11 +146,7 @@ public:
 
   typedef geometry::tPoint<Tdimension, TElement> tPoint;
   typedef geometry::tBoundingBox<Tdimension, TElement> tBoundingBox;
-
-//  /*!
-//   * \brief An instantiation of std::binary_function for easier implementation of an own appropriate metric
-//   */
-//  typedef std::binary_function<tCoordinates, tCoordinates, typename tCoordinates::tElement> tMetric;
+  typedef std::function < TElement(const tPoint &, const tPoint &) > tMetric;
 
   /*!
    * \brief An inner class of the tKDTree template for the nodes of the tree
@@ -184,7 +180,7 @@ public:
      * \param metric   A functor that computes an appropriate metric
      */
     template <typename TIterator>
-    tNode(TIterator begin, TIterator end);
+    tNode(TIterator begin, TIterator end, tMetric metric);
 
     /*!
      * brief The dtor of tKDTreeNode
@@ -262,7 +258,7 @@ public:
     size_t number_of_points;
     tPoint center_of_mass;
 
-    size_t SelectSplitAxis() const;
+    size_t SelectSplitAxis(tMetric metric) const;
   };
 
   /*!
@@ -287,6 +283,9 @@ public:
   template <typename TIterator>
   tKDTree(TIterator begin, TIterator end);
 
+  template <typename TIterator>
+  tKDTree(TIterator begin, TIterator end, tMetric metric);
+
   /*!
    * \brief The dtor of tKDTree
    */
@@ -298,17 +297,6 @@ public:
    * \return The uppermost node in the tree that contains all points
    */
   inline const tNode &Root() const;
-
-//  /*!
-//   * \brief The default metric (Euklidian norm) used in this algorithm
-//   */
-//  struct tDefaultMetric : public tMetric
-//  {
-//    inline const typename tMetric::result_type operator()(const typename tMetric::first_argument_type &x, const typename tMetric::second_argument_type &y) const
-//    {
-//      return (x - y).Length();
-//    }
-//  };
 
 //----------------------------------------------------------------------
 // Private fields and methods

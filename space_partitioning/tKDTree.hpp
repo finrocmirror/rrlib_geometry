@@ -68,7 +68,16 @@ namespace geometry
 template <size_t Tdimension, typename TElement>
 template <typename TIterator>
 tKDTree<Tdimension, TElement>::tKDTree(TIterator begin, TIterator end)
-    : root(new tNode(begin, end))
+    : root(new tNode(begin, end, [](const tPoint &a, const tPoint &b)
+{
+  return (a - b).Length();
+}))
+{}
+
+template <size_t Tdimension, typename TElement>
+template <typename TIterator>
+tKDTree<Tdimension, TElement>::tKDTree(TIterator begin, TIterator end, tMetric metric)
+    : root(new tNode(begin, end, metric))
 {}
 
 //----------------------------------------------------------------------
@@ -95,9 +104,9 @@ const typename tKDTree<Tdimension, TElement>::tNode &tKDTree<Tdimension, TElemen
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
 template <typename TIterator>
-tKDTree<Tdimension, TElement>::tNode::tNode(TIterator begin, TIterator end)
+tKDTree<Tdimension, TElement>::tNode::tNode(TIterator begin, TIterator end, tMetric metric)
     : bounding_box(begin, end),
-    split_axis(SelectSplitAxis()),
+    split_axis(SelectSplitAxis(metric)),
     split_value(0.5 *(this->bounding_box.Min()[this->split_axis] + this->bounding_box.Max()[this->split_axis])),
     left_child(0),
     right_child(0),
@@ -117,8 +126,8 @@ tKDTree<Tdimension, TElement>::tNode::tNode(TIterator begin, TIterator end)
     }
     if (split != begin && split != end)
     {
-      this->left_child = new tNode(begin, split);
-      this->right_child = new tNode(split, end);
+      this->left_child = new tNode(begin, split, metric);
+      this->right_child = new tNode(split, end, metric);
       assert(this->left_child && this->right_child);
     }
   }
@@ -232,7 +241,7 @@ const typename tKDTree<Tdimension, TElement>::tNode &tKDTree<Tdimension, TElemen
 // tKDTree::tNode SelectSplitAxis
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-size_t tKDTree<Tdimension, TElement>::tNode::SelectSplitAxis() const
+size_t tKDTree<Tdimension, TElement>::tNode::SelectSplitAxis(tMetric metric) const
 {
   tPoint sample_point;
   size_t result = 0;
@@ -240,7 +249,7 @@ size_t tKDTree<Tdimension, TElement>::tNode::SelectSplitAxis() const
   for (size_t i = 0; i < Tdimension; ++i)
   {
     sample_point[i] = this->bounding_box.Max()[i] - this->bounding_box.Min()[i];
-    TElement width = (sample_point - tPoint::Zero()).Length();
+    TElement width = metric(sample_point, tPoint::Zero());
     sample_point[i] = 0;
     if (width > max_width)
     {

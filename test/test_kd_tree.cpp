@@ -75,6 +75,26 @@ const double cNORMAL_DISTRIBUTION_QUANTILE_99_9_PERCENT = 3.0902;
 // Implementation
 //----------------------------------------------------------------------
 
+struct tManhattanNorm
+{
+  inline tElement operator()(const tPoint &a, const tPoint &b) const
+  {
+    return std::fabs(a.X() - b.X()) + std::fabs(a.Y() - b.Y());
+  }
+};
+
+int ManhattanNorm(const tPoint &a, const tPoint &b)
+{
+  return std::fabs(a.X() - b.X()) + std::fabs(a.Y() - b.Y());
+}
+
+auto manhattan_norm = [](const tPoint & a, const tPoint & b)
+{
+  return std::fabs(a.X() - b.X()) + std::fabs(a.Y() - b.Y());
+};
+
+
+
 void DrawPoint(tWindow &window, const tPoint &point)
 {
   window.DrawCircle(point.X() + 0.5 * cWINDOW_SIZE, point.Y() + 0.5 * cWINDOW_SIZE, 1, true);
@@ -198,6 +218,10 @@ int main(int argc, char **argv)
   window.Render();
 
   tKDTree kd_tree(points.begin(), points.end());
+//  tKDTree kd_tree(points.begin(), points.end(), [](const tPoint &a, const tPoint &b){return (a - b).Length();});
+//  tKDTree kd_tree(points.begin(), points.end(), tManhattanNorm());
+//  tKDTree kd_tree(points.begin(), points.end(), ManhattanNorm);
+//  tKDTree kd_tree(points.begin(), points.end(), manhattan_norm);
 
   for (unsigned int i = 0; i < 10; i++)
   {
