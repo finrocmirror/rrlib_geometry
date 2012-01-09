@@ -58,6 +58,12 @@ namespace geometry
 // Const values
 //----------------------------------------------------------------------
 
+template <size_t Tdimension, typename TElement>
+const typename tKDTree<Tdimension, TElement>::tMetric tKDTree<Tdimension, TElement>::cDEFAULT_METRIC = [](const tPoint &a, const tPoint &b)
+{
+  return (a - b).Length();
+};
+
 //----------------------------------------------------------------------
 // Implementation
 //----------------------------------------------------------------------
@@ -67,17 +73,8 @@ namespace geometry
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
 template <typename TIterator>
-tKDTree<Tdimension, TElement>::tKDTree(TIterator begin, TIterator end)
-    : root(new tNode(begin, end, [](const tPoint &a, const tPoint &b)
-{
-  return (a - b).Length();
-}))
-{}
-
-template <size_t Tdimension, typename TElement>
-template <typename TIterator>
-tKDTree<Tdimension, TElement>::tKDTree(TIterator begin, TIterator end, tMetric metric)
-    : root(new tNode(begin, end, metric))
+tKDTree<Tdimension, TElement>::tKDTree(TIterator begin_points, TIterator end_points, tMetric metric)
+    : root(new tNode(begin_points, end_points, metric))
 {}
 
 //----------------------------------------------------------------------
@@ -104,30 +101,29 @@ const typename tKDTree<Tdimension, TElement>::tNode &tKDTree<Tdimension, TElemen
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
 template <typename TIterator>
-tKDTree<Tdimension, TElement>::tNode::tNode(TIterator begin, TIterator end, tMetric metric)
-    : bounding_box(begin, end),
+tKDTree<Tdimension, TElement>::tNode::tNode(TIterator points_begin, TIterator points_end, tMetric metric)
+    : bounding_box(points_begin, points_end),
     split_axis(SelectSplitAxis(metric)),
     split_value(0.5 *(this->bounding_box.Min()[this->split_axis] + this->bounding_box.Max()[this->split_axis])),
     left_child(0),
     right_child(0),
-    number_of_points(std::distance(begin, end))
+    number_of_points(std::distance(points_begin, points_end))
 {
   if (this->number_of_points > 1)
   {
-    std::sort(begin, end,
-              [this](const tPoint &a, const tPoint &b)
+    std::sort(points_begin, points_end, [this](const tPoint &a, const tPoint &b)
     {
       return a[this->split_axis] < b[this->split_axis];
     });
-    TIterator split = begin;
-    while (split != end && (*split)[this->split_axis] <= this->split_value)
+    TIterator split = points_begin;
+    while (split != points_end && (*split)[this->split_axis] <= this->split_value)
     {
       ++split;
     }
-    if (split != begin && split != end)
+    if (split != points_begin && split != points_end)
     {
-      this->left_child = new tNode(begin, split, metric);
-      this->right_child = new tNode(split, end, metric);
+      this->left_child = new tNode(points_begin, split, metric);
+      this->right_child = new tNode(split, points_end, metric);
       assert(this->left_child && this->right_child);
     }
   }
@@ -136,7 +132,7 @@ tKDTree<Tdimension, TElement>::tNode::tNode(TIterator begin, TIterator end, tMet
   if (this->IsLeaf())
   {
     // there may be more than one point in a leave
-    for (auto it = begin; it != end; it++)
+    for (auto it = points_begin; it != points_end; it++)
     {
       for (size_t i = 0; i < Tdimension; i++)
       {
@@ -203,7 +199,7 @@ bool tKDTree<Tdimension, TElement>::tNode::IsLeaf() const
 // tKDTree::tNode BoundingBox
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-const typename tKDTree<Tdimension, TElement>::tBoundingBox &tKDTree<Tdimension, TElement>::tNode::BoundingBox() const
+const typename tKDTree<Tdimension, TElement>::tNode::tBoundingBox &tKDTree<Tdimension, TElement>::tNode::BoundingBox() const
 {
   return this->bounding_box;
 }

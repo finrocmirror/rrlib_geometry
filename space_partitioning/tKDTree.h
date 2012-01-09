@@ -145,8 +145,9 @@ class tKDTree
 public:
 
   typedef geometry::tPoint<Tdimension, TElement> tPoint;
-  typedef geometry::tBoundingBox<Tdimension, TElement> tBoundingBox;
   typedef std::function < TElement(const tPoint &, const tPoint &) > tMetric;
+
+  static const tMetric cDEFAULT_METRIC;
 
   /*!
    * \brief An inner class of the tKDTree template for the nodes of the tree
@@ -167,6 +168,8 @@ public:
     //----------------------------------------------------------------------
   public:
 
+    typedef geometry::tBoundingBox<Tdimension, TElement> tBoundingBox;
+
     /*!
      * \brief The ctor of tNode
      *
@@ -175,12 +178,12 @@ public:
      * therefore splits this list and propagates the parts to nodes it creates
      * as its own children until only single points are left.
      *
-     * \param begin    An indirect iterator to the begin of the data to manage
-     * \param end      An indirect iterator to the end of the data to manage
-     * \param metric   A functor that computes an appropriate metric
+     * \param points_begin   An indirect iterator to the begin of the data to manage
+     * \param points_end     An indirect iterator to the end of the data to manage
+     * \param metric         A functor that computes an appropriate metric
      */
     template <typename TIterator>
-    tNode(TIterator begin, TIterator end, tMetric metric);
+    tNode(TIterator points_begin, TIterator points_end, tMetric metric);
 
     /*!
      * brief The dtor of tKDTreeNode
@@ -216,7 +219,7 @@ public:
     inline bool IsLeaf() const;
 
     /*!
-     * \brief Get the axis-aligned boungind box of the points underneath this node
+     * \brief Get the axis-aligned bounging box of the points underneath this node
      *
      * \return The maximum coordinates of this node
      */
@@ -281,10 +284,10 @@ public:
    * in the underlying data.
    */
   template <typename TIterator>
-  tKDTree(TIterator begin, TIterator end);
-
-  template <typename TIterator>
-  tKDTree(TIterator begin, TIterator end, tMetric metric);
+  tKDTree(TIterator points_begin, TIterator points_end, tMetric metric = cDEFAULT_METRIC);
+//
+//  template <typename TIterator>
+//  tKDTree(TIterator begin, TIterator end, tMetric metric);
 
   /*!
    * \brief The dtor of tKDTree
