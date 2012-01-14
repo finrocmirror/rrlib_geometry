@@ -58,12 +58,6 @@ namespace geometry
 // Const values
 //----------------------------------------------------------------------
 
-template <size_t Tdimension, typename TElement>
-const typename tKDTree<Tdimension, TElement>::tMetric tKDTree<Tdimension, TElement>::cDEFAULT_METRIC = [](const tPoint &a, const tPoint &b)
-{
-  return (a - b).Length();
-};
-
 //----------------------------------------------------------------------
 // Implementation
 //----------------------------------------------------------------------

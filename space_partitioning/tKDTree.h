@@ -145,9 +145,8 @@ class tKDTree
 public:
 
   typedef geometry::tPoint<Tdimension, TElement> tPoint;
-  typedef std::function < TElement(const tPoint &, const tPoint &) > tMetric;
 
-  static const tMetric cDEFAULT_METRIC;
+  typedef typename tPoint::tMetric tMetric;
 
   /*!
    * \brief An inner class of the tKDTree template for the nodes of the tree
@@ -284,10 +283,7 @@ public:
    * in the underlying data.
    */
   template <typename TIterator>
-  tKDTree(TIterator points_begin, TIterator points_end, tMetric metric = cDEFAULT_METRIC);
-//
-//  template <typename TIterator>
-//  tKDTree(TIterator begin, TIterator end, tMetric metric);
+  tKDTree(TIterator points_begin, TIterator points_end, tMetric metric = tPoint::cEUCLIDEAN_DISTANCE);
 
   /*!
    * \brief The dtor of tKDTree
