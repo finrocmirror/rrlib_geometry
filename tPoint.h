@@ -69,9 +69,9 @@ namespace geometry
     Tobias Foehst hasn't done yet !!
 */
 template < size_t Tdimension, typename TElement = double >
-class tPoint : public rrlib::math::tVector<Tdimension, TElement, rrlib::math::vector::Cartesian>
+class tPoint : public math::tVector<Tdimension, TElement, math::vector::Cartesian>
 {
-  typedef math::tVector<Tdimension, TElement, rrlib::math::vector::Cartesian> tVector;
+  typedef math::tVector<Tdimension, TElement, math::vector::Cartesian> tVector;
 
 //----------------------------------------------------------------------
 // Public methods and typedefs
