@@ -66,7 +66,7 @@ namespace geometry
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
 tShape<Tdimension, TElement>::tShape()
-    : changed(false),
+  : changed(false),
     bounding_box(NULL),
     center_of_gravity(NULL)
 {}

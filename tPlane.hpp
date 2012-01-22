@@ -73,13 +73,13 @@ tPlane<Tdimension, TElement>::tPlane()
 
 template <size_t Tdimension, typename TElement>
 tPlane<Tdimension, TElement>::tPlane(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &normal)
-    : support(support),
+  : support(support),
     normal(normal.Normalized())
 {}
 
 template <size_t Tdimension, typename TElement>
 tPlane<Tdimension, TElement>::tPlane(const typename tShape::tPoint &p1, const typename tShape::tPoint &p2, const typename tShape::tPoint &p3)
-    : support(p1),
+  : support(p1),
     normal(CrossProduct(p2 - p1, p3 - p1).Normalized())
 {}
 
@@ -117,7 +117,7 @@ void tPlane<Tdimension, TElement>::Set(const typename tShape::tPoint &p1, const 
 template <size_t Tdimension, typename TElement>
 const TElement tPlane<Tdimension, TElement>::GetDistanceToPoint(const typename tShape::tPoint &point) const
 {
-  return math::AbsoluteValue(this->normal *(point - this->support));
+  return math::AbsoluteValue(this->normal * (point - this->support));
 }
 
 //----------------------------------------------------------------------
@@ -126,7 +126,7 @@ const TElement tPlane<Tdimension, TElement>::GetDistanceToPoint(const typename t
 template <size_t Tdimension, typename TElement>
 const typename tShape<Tdimension, TElement>::tPoint tPlane<Tdimension, TElement>::GetClosestPoint(const typename tShape::tPoint &reference_point) const
 {
-  return -(this->normal *(reference_point - this->support)) * this->normal + reference_point;
+  return -(this->normal * (reference_point - this->support)) * this->normal + reference_point;
 }
 
 //----------------------------------------------------------------------

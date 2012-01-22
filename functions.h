@@ -68,7 +68,7 @@ inline const math::tAngleRad GetSlope(const tLineSegment<2, TElement> &line_segm
 }
 
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
-inline const typename boost::enable_if_c<(Tdimension <= 3), double>::type GetCurvature(const tBezierCurve<Tdimension, TElement, Tdegree> &curve, TElement parameter)
+inline const typename boost::enable_if_c < (Tdimension <= 3), double >::type GetCurvature(const tBezierCurve<Tdimension, TElement, Tdegree> &curve, TElement parameter)
 {
   typename tBezierCurve<Tdimension, TElement, Tdegree>::tDerivative first_derivative(curve.GetDerivative());
   typename tBezierCurve<Tdimension, TElement, Tdegree>::tDerivative::tDerivative second_derivative(first_derivative.GetDerivative());

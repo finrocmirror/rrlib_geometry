@@ -67,7 +67,7 @@ namespace geometry
 template <size_t Tdimension, typename TElement>
 template <typename TIterator>
 tUniformBSplineCurve<Tdimension, TElement>::tUniformBSplineCurve(TIterator begin, TIterator end, double tension)
-    : tSplineCurve(begin, end),
+  : tSplineCurve(begin, end),
     tension(tension)
 {}
 

@@ -68,7 +68,7 @@ namespace geometry
 template <size_t Tdimension, typename TElement>
 template <typename TIterator>
 tKDTree<Tdimension, TElement>::tKDTree(TIterator begin_points, TIterator end_points, tMetric metric)
-    : root(new tNode(begin_points, end_points, metric))
+  : root(new tNode(begin_points, end_points, metric))
 {}
 
 //----------------------------------------------------------------------
@@ -96,16 +96,16 @@ const typename tKDTree<Tdimension, TElement>::tNode &tKDTree<Tdimension, TElemen
 template <size_t Tdimension, typename TElement>
 template <typename TIterator>
 tKDTree<Tdimension, TElement>::tNode::tNode(TIterator points_begin, TIterator points_end, tMetric metric)
-    : bounding_box(points_begin, points_end),
+  : bounding_box(points_begin, points_end),
     split_axis(SelectSplitAxis(metric)),
-    split_value(0.5 *(this->bounding_box.Min()[this->split_axis] + this->bounding_box.Max()[this->split_axis])),
+    split_value(0.5 * (this->bounding_box.Min()[this->split_axis] + this->bounding_box.Max()[this->split_axis])),
     left_child(0),
     right_child(0),
     number_of_points(std::distance(points_begin, points_end))
 {
   if (this->number_of_points > 1)
   {
-    std::sort(points_begin, points_end, [this](const tPoint &a, const tPoint &b)
+    std::sort(points_begin, points_end, [this](const tPoint & a, const tPoint & b)
     {
       return a[this->split_axis] < b[this->split_axis];
     });

@@ -75,13 +75,13 @@ tLine<Tdimension, TElement>::tLine()
 
 template <size_t Tdimension, typename TElement>
 tLine<Tdimension, TElement>::tLine(const typename tShape::tPoint &support, const math::tVector<Tdimension, TElement> &direction)
-    : support(support),
+  : support(support),
     direction(direction.Normalized())
 {}
 
 template <size_t Tdimension, typename TElement>
 tLine<Tdimension, TElement>::tLine(const typename tShape::tPoint &support, const typename tShape::tPoint &second_support)
-    : support(support),
+  : support(support),
     direction((second_support - support).Normalized())
 {}
 

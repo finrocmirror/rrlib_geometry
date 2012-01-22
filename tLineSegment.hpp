@@ -73,7 +73,7 @@ tLineSegment<Tdimension, TElement>::tLineSegment()
 
 template <size_t Tdimension, typename TElement>
 tLineSegment<Tdimension, TElement>::tLineSegment(const typename tShape::tPoint &begin, const typename tShape::tPoint &end)
-    : tLine(begin, end - begin),
+  : tLine(begin, end - begin),
     end(end)
 {}
 

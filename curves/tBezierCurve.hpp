@@ -67,7 +67,7 @@ namespace geometry
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 template <typename TIterator>
 tBezierCurve<Tdimension, TElement, Tdegree>::tBezierCurve(TIterator begin, TIterator end)
-    : tShape()
+  : tShape()
 {
   static_assert(Tdegree > 0, "The degree of Bezier curves must be greater than zero");
   assert(static_cast<size_t>(std::distance(begin, end)) == this->NumberOfControlPoints());
@@ -100,7 +100,7 @@ const TElement tBezierCurve<Tdimension, TElement, Tdegree>::GetTwist() const
   {
     twist = std::max(twist, ((this->control_points[i + 2] - this->control_points[i + 1]) - (this->control_points[i + 1] - this->control_points[i])).Length());
   }
-  return Tdegree *(Tdegree - 1) * twist;
+  return Tdegree * (Tdegree - 1) * twist;
 }
 
 //----------------------------------------------------------------------
@@ -207,7 +207,7 @@ const bool tBezierCurve<Tdimension, TElement, Tdegree>::GetIntersections(std::ve
   if (own_twist > other_twist && !math::IsEqual(own_twist, 0))
   {
     tSubdivision subdivision(this->GetSubdivision());
-    tParameter middle_parameter(0.5 *(min_parameter + max_parameter));
+    tParameter middle_parameter(0.5 * (min_parameter + max_parameter));
     bool result = false;
     result |= subdivision.first.GetIntersections(intersection_points, intersection_parameters, other, min_parameter, middle_parameter);
     result |= subdivision.second.GetIntersections(intersection_points, intersection_parameters, other, middle_parameter, max_parameter);
@@ -243,7 +243,7 @@ const bool tBezierCurve<Tdimension, TElement, Tdegree>::GetIntersections(std::ve
     tParameter min_parameter, tParameter max_parameter) const
 {
   // check if intersection with line is possible
-  typename tShape::tPoint center_of_bounding_box(math::tVector<Tdimension, TElement>(0.5 *(this->BoundingBox().Min() + this->BoundingBox().Max())));
+  typename tShape::tPoint center_of_bounding_box(math::tVector<Tdimension, TElement>(0.5 * (this->BoundingBox().Min() + this->BoundingBox().Max())));
   double radius_of_bounding_sphere = 0.5 * (this->BoundingBox().Max() - this->BoundingBox().Min()).Length();
   if (line.GetDistanceToPoint(center_of_bounding_box) > radius_of_bounding_sphere)
   {
@@ -254,7 +254,7 @@ const bool tBezierCurve<Tdimension, TElement, Tdegree>::GetIntersections(std::ve
   if (!math::IsEqual(this->GetTwist(), 0))
   {
     tSubdivision subdivision(this->GetSubdivision());
-    tParameter middle_parameter(0.5 *(min_parameter + max_parameter));
+    tParameter middle_parameter(0.5 * (min_parameter + max_parameter));
     bool result = false;
     result |= subdivision.first.GetIntersections(intersection_points, intersection_parameters, line, min_parameter, middle_parameter);
     result |= subdivision.second.GetIntersections(intersection_points, intersection_parameters, line, middle_parameter, max_parameter);
