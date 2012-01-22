@@ -110,7 +110,7 @@ void tSplineCurve<Tdimension, TElement, Tdegree>::InsertControlPoint(typename st
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 const typename tShape<Tdimension, TElement>::tPoint tSplineCurve<Tdimension, TElement, Tdegree>::operator()(tParameter t) const
 {
-  assert((0 <= t) && (t <= this->GetNumberOfSegments()));
+  assert((0 <= t) && (t <= this->NumberOfSegments()));
   const tBezierCurve bezier_curve(this->GetBezierCurveForParameter(t, t));
   return bezier_curve(t);
 }
@@ -121,14 +121,14 @@ const typename tShape<Tdimension, TElement>::tPoint tSplineCurve<Tdimension, TEl
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 const typename tSplineCurve<Tdimension, TElement, Tdegree>::tBezierCurve tSplineCurve<Tdimension, TElement, Tdegree>::GetBezierCurveForParameter(tParameter t) const
 {
-  assert((0 <= t) && (t <= this->GetNumberOfSegments()));
-  return this->GetBezierCurveForSegment(static_cast<size_t>(t < this->GetNumberOfSegments() ? t : t - 1.0));
+  assert((0 <= t) && (t <= this->NumberOfSegments()));
+  return this->GetBezierCurveForSegment(static_cast<size_t>(t < this->NumberOfSegments() ? t : t - 1.0));
 }
 
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 const typename tSplineCurve<Tdimension, TElement, Tdegree>::tBezierCurve tSplineCurve<Tdimension, TElement, Tdegree>::GetBezierCurveForParameter(tParameter t, tParameter &local_t) const
 {
-  local_t = t < this->GetNumberOfSegments() ? t - std::trunc(t) : 1.0;
+  local_t = t < this->NumberOfSegments() ? t - std::trunc(t) : 1.0;
   return this->GetBezierCurveForParameter(t);
 }
 
@@ -140,11 +140,11 @@ template <unsigned int Tother_degree>
 void tSplineCurve<Tdimension, TElement, Tdegree>::GetIntersections(std::vector<typename tShape::tPoint> &intersection_points, std::vector<tParameter> &intersection_parameters,
     const tSplineCurve<Tdimension, TElement, Tother_degree> &other_spline) const
 {
-  for (unsigned int i = 0; i < this->GetNumberOfSegments(); ++i)
+  for (unsigned int i = 0; i < this->NumberOfSegments(); ++i)
   {
     size_t last_size = intersection_parameters.size();
     const tBezierCurve bezier_curve(this->GetBezierCurveForSegment(i));
-    for (unsigned int k = 0; k < other_spline.GetNumberOfSegments(); ++k)
+    for (unsigned int k = 0; k < other_spline.NumberOfSegments(); ++k)
     {
       bezier_curve.GetIntersections(intersection_points, intersection_parameters, other_spline.GetBezierCurveForSegment(k));
     }
@@ -160,7 +160,7 @@ template <unsigned int Tother_degree>
 void tSplineCurve<Tdimension, TElement, Tdegree>::GetIntersections(std::vector<typename tShape::tPoint> &intersection_points, std::vector<tParameter> &intersection_parameters,
     const geometry::tBezierCurve<Tdimension, TElement, Tother_degree> &bezier_curve) const
 {
-  for (unsigned int i = 0; i < this->GetNumberOfSegments(); ++i)
+  for (unsigned int i = 0; i < this->NumberOfSegments(); ++i)
   {
     size_t last_size = intersection_parameters.size();
     this->GetBezierCurveForSegment(i).GetIntersections(intersection_points, intersection_parameters, bezier_curve);

@@ -82,9 +82,6 @@ public:
   template <typename TIterator>
   tUniformBSplineCurve(TIterator begin, TIterator end, double tension = 0.0);
 
-  template <typename TSTLContainer>
-  explicit tUniformBSplineCurve(const TSTLContainer &control_points, double tension = 0.0);
-
   inline double GetTension() const
   {
     return this->tension;
