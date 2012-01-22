@@ -71,13 +71,6 @@ tUniformBSplineCurve<Tdimension, TElement>::tUniformBSplineCurve(TIterator begin
     tension(tension)
 {}
 
-template <size_t Tdimension, typename TElement>
-template <typename TSTLContainer>
-tUniformBSplineCurve<Tdimension, TElement>::tUniformBSplineCurve(const TSTLContainer &control_points, double tension)
-    : tSplineCurve(control_points),
-    tension(tension)
-{}
-
 //----------------------------------------------------------------------
 // tUniformBSplineCurve SetTension
 //----------------------------------------------------------------------
@@ -96,10 +89,10 @@ const typename tSplineCurve<Tdimension, TElement, 3>::tBezierCurve tUniformBSpli
 {
   typename tShape::tPoint bezier_control_points[4];
 
-  bezier_control_points[0] = (1.0 - this->tension) / 4.0 * (this->GetControlPoint(i) + this->GetControlPoint(i + 2)) + (1.0 + this->tension) / 2.0 * this->GetControlPoint(i + 1);
-  bezier_control_points[1] = (1.0 + this->tension) / 2.0 * this->GetControlPoint(i + 1) + (1.0 - this->tension) / 2.0 * this->GetControlPoint(i + 2);
-  bezier_control_points[2] = (1.0 - this->tension) / 2.0 * this->GetControlPoint(i + 1) + (1.0 + this->tension) / 2.0 * this->GetControlPoint(i + 2);
-  bezier_control_points[3] = (1.0 - this->tension) / 4.0 * (this->GetControlPoint(i + 1) + this->GetControlPoint(i + 3)) + (1.0 + this->tension) / 2.0 * this->GetControlPoint(i + 2);
+  bezier_control_points[0] = (1.0 - this->tension) / 4.0 * (this->ControlPoints()[i] + this->ControlPoints()[i + 2]) + (1.0 + this->tension) / 2.0 * this->ControlPoints()[i + 1];
+  bezier_control_points[1] = (1.0 + this->tension) / 2.0 * this->ControlPoints()[i + 1] + (1.0 - this->tension) / 2.0 * this->ControlPoints()[i + 2];
+  bezier_control_points[2] = (1.0 - this->tension) / 2.0 * this->ControlPoints()[i + 1] + (1.0 + this->tension) / 2.0 * this->ControlPoints()[i + 2];
+  bezier_control_points[3] = (1.0 - this->tension) / 4.0 * (this->ControlPoints()[i + 1] + this->ControlPoints()[i + 3]) + (1.0 + this->tension) / 2.0 * this->ControlPoints()[i + 2];
 
   return typename tSplineCurve::tBezierCurve(bezier_control_points, bezier_control_points + 4);
 };

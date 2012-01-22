@@ -40,6 +40,10 @@
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
 //----------------------------------------------------------------------
+#ifdef _LIB_RRLIB_CANVAS_PRESENT_
+#include "rrlib/canvas/tCanvas2D.h"
+#include "rrlib/canvas/tCanvas3D.h"
+#endif
 
 //----------------------------------------------------------------------
 // Internal includes with ""
@@ -80,7 +84,10 @@ class tSplineCurve : public tShape<Tdimension, TElement>
 //----------------------------------------------------------------------
 public:
 
-  static const unsigned int cDEGREE;
+  static inline const unsigned int Degree()
+  {
+    return Tdegree;
+  }
 
   typedef geometry::tBezierCurve<Tdimension, TElement, Tdegree> tBezierCurve;
   typedef typename tBezierCurve::tParameter tParameter;
@@ -88,22 +95,19 @@ public:
   template <typename TIterator>
   tSplineCurve(TIterator begin, TIterator end);
 
-  template <typename TSTLContainer>
-  explicit tSplineCurve(const TSTLContainer &control_points);
-
-  inline const size_t GetNumberOfControlPoints() const
+  inline const size_t NumberOfControlPoints() const
   {
     return this->control_points.size();
   }
 
-  inline const std::vector<typename tShape::tPoint> &GetControlPoints() const
+  inline const unsigned int NumberOfSegments() const
+  {
+    return this->control_points.size() - Tdegree;
+  };
+
+  inline const std::vector<typename tShape::tPoint> &ControlPoints() const
   {
     return this->control_points;
-  }
-
-  inline const typename tShape::tPoint &GetControlPoint(size_t i) const
-  {
-    return this->control_points[i];
   }
 
   void SetControlPoint(size_t i, const typename tShape::tPoint &point);
@@ -113,8 +117,6 @@ public:
   void InsertControlPoint(typename std::vector<typename tShape::tPoint>::iterator position, const typename tShape::tPoint &point);
 
   const typename tShape::tPoint operator()(tParameter t) const;
-
-  const unsigned int GetNumberOfSegments() const;
 
   const tBezierCurve GetBezierCurveForParameter(tParameter t) const;
 
@@ -152,11 +154,20 @@ private:
 };
 
 //----------------------------------------------------------------------
+// Operators for rrlib_canvas
+//----------------------------------------------------------------------
+#ifdef _LIB_RRLIB_CANVAS_PRESENT_
+
+template <typename TElement>
+inline canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tSplineCurve<2, TElement, 3> &spline);
+
+#endif
+
+//----------------------------------------------------------------------
 // End of namespace declaration
 //----------------------------------------------------------------------
 }
 }
-
 
 #include "rrlib/geometry/curves/tSplineCurve.hpp"
 

@@ -273,6 +273,21 @@ void tLine<Tdimension, TElement>::UpdateCenterOfGravity(typename tShape::tPoint 
 }
 
 //----------------------------------------------------------------------
+// Operators for rrlib_canvas
+//----------------------------------------------------------------------
+#ifdef _LIB_RRLIB_CANVAS_PRESENT_
+
+template <typename TElement>
+canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tLine<2, TElement> &line)
+{
+  canvas.DrawLine(line.Support(), line.Support() + line.Direction());
+
+  return canvas;
+}
+
+#endif
+
+//----------------------------------------------------------------------
 // End of namespace declaration
 //----------------------------------------------------------------------
 }

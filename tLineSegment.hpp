@@ -163,7 +163,20 @@ void tLineSegment<Tdimension, TElement>::UpdateCenterOfGravity(typename tShape::
   center_of_gravity = 0.5 * (this->Begin() + this->End());
 }
 
+//----------------------------------------------------------------------
+// Operators for rrlib_canvas
+//----------------------------------------------------------------------
+#ifdef _LIB_RRLIB_CANVAS_PRESENT_
 
+template <typename TElement>
+canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tLineSegment<2, TElement> &line_segment)
+{
+  canvas.DrawLineSegment(line_segment.Begin(), line_segment.End());
+
+  return canvas;
+}
+
+#endif
 
 //----------------------------------------------------------------------
 // End of namespace declaration

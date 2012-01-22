@@ -71,13 +71,6 @@ tCardinalSplineCurve<Tdimension, TElement>::tCardinalSplineCurve(TIterator begin
     tension(tension)
 {}
 
-template <size_t Tdimension, typename TElement>
-template <typename TSTLContainer>
-tCardinalSplineCurve<Tdimension, TElement>::tCardinalSplineCurve(const TSTLContainer &control_points, double tension)
-    : tSplineCurve(control_points),
-    tension(tension)
-{}
-
 //----------------------------------------------------------------------
 // tCardinalSplineCurve SetTension
 //----------------------------------------------------------------------
@@ -94,14 +87,14 @@ void tCardinalSplineCurve<Tdimension, TElement>::SetTension(double tension)
 template <size_t Tdimension, typename TElement>
 const typename tSplineCurve<Tdimension, TElement, 3>::tBezierCurve tCardinalSplineCurve<Tdimension, TElement>::GetBezierCurveForSegment(unsigned int i) const
 {
-  std::vector<typename tShape::tPoint> bezier_control_points;
+  typename tShape::tPoint bezier_control_points[4];
 
-  bezier_control_points.push_back(this->GetControlPoint(i + 1));
-  bezier_control_points.push_back(this->GetControlPoint(i + 1) + (1.0 - this->tension) / 2.0 *(this->GetControlPoint(i + 2) - this->GetControlPoint(i)));
-  bezier_control_points.push_back(this->GetControlPoint(i + 2) + (1.0 - this->tension) / 2.0 *(this->GetControlPoint(i + 1) - this->GetControlPoint(i + 3)));
-  bezier_control_points.push_back(this->GetControlPoint(i + 2));
+  bezier_control_points[0] = this->ControlPoints()[i + 1];
+  bezier_control_points[1] = this->ControlPoints()[i + 1] + (1.0 - this->tension) / 2.0 * (this->ControlPoints()[i + 2] - this->ControlPoints()[i]);
+  bezier_control_points[2] = this->ControlPoints()[i + 2] + (1.0 - this->tension) / 2.0 * (this->ControlPoints()[i + 1] - this->ControlPoints()[i + 3]);
+  bezier_control_points[3] = this->ControlPoints()[i + 2];
 
-  return typename tSplineCurve::tBezierCurve(bezier_control_points);
+  return typename tSplineCurve::tBezierCurve(bezier_control_points, bezier_control_points + 4);
 };
 
 //----------------------------------------------------------------------

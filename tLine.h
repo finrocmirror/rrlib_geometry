@@ -40,6 +40,9 @@
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
 //----------------------------------------------------------------------
+#ifdef _LIB_RRLIB_CANVAS_PRESENT_
+#include "rrlib/canvas/tCanvas2D.h"
+#endif
 
 //----------------------------------------------------------------------
 // Internal includes with ""
@@ -140,6 +143,16 @@ extern template class tLine<3, int>;
 
 extern template class tLine<2, unsigned int>;
 extern template class tLine<3, unsigned int>;
+
+//----------------------------------------------------------------------
+// Operators for rrlib_canvas
+//----------------------------------------------------------------------
+#ifdef _LIB_RRLIB_CANVAS_PRESENT_
+
+template <typename TElement>
+canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tLine<2, TElement> &line);
+
+#endif
 
 //----------------------------------------------------------------------
 // End of namespace declaration

@@ -42,6 +42,10 @@
 //----------------------------------------------------------------------
 #include <vector>
 
+#ifdef _LIB_RRLIB_CANVAS_PRESENT_
+#include "rrlib/canvas/tCanvas2D.h"
+#endif
+
 //----------------------------------------------------------------------
 // Internal includes with ""
 //----------------------------------------------------------------------
@@ -100,12 +104,9 @@ public:
   template <typename TIterator>
   tBezierCurve(TIterator begin, TIterator end);
 
-  template <typename TSTLContainer>
-  explicit tBezierCurve(const TSTLContainer &control_points);
-
-  inline const typename tShape::tPoint &GetControlPoint(size_t i) const
+  inline const typename tShape::tPoint *ControlPoints() const
   {
-    return this->control_points[i];
+    return this->control_points;
   }
 
   void SetControlPoint(size_t i, const typename tShape::tPoint &point);
@@ -167,6 +168,19 @@ extern template class tBezierCurve<2, double, 3>;
 
 extern template class tBezierCurve<3, double, 2>;
 extern template class tBezierCurve<3, double, 3>;
+
+//----------------------------------------------------------------------
+// Operators for rrlib_canvas
+//----------------------------------------------------------------------
+#ifdef _LIB_RRLIB_CANVAS_PRESENT_
+
+template <typename TElement>
+canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2, TElement, 2> &bezier_curve);
+
+template <typename TElement>
+canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2, TElement, 3> &bezier_curve);
+
+#endif
 
 //----------------------------------------------------------------------
 // End of namespace declaration

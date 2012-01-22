@@ -68,8 +68,8 @@ typedef rrlib::geometry::tLine<2, tElement> tLine;
 typedef rrlib::geometry::tLineSegment<2, tElement> tLineSegment;
 typedef rrlib::geometry::tBezierCurve<2, tElement, 3> tBezierCurve;
 typedef rrlib::geometry::tSplineCurve<2, tElement, 3> tSplineCurve;
-typedef rrlib::geometry::tUniformBSplineCurve<2, tElement> tConcreteSplineCurve;
-//typedef rrlib::geometry::tCardinalSplineCurve<2, tElement> tConcreteSplineCurve;
+//typedef rrlib::geometry::tUniformBSplineCurve<2, tElement> tConcreteSplineCurve;
+typedef rrlib::geometry::tCardinalSplineCurve<2, tElement> tConcreteSplineCurve;
 
 //----------------------------------------------------------------------
 // Const values
@@ -119,8 +119,8 @@ void DrawControlPolygon(tWindow &window, const tBezierCurve &bezier_curve)
 {
   for (size_t i = 1; i < bezier_curve.NumberOfControlPoints(); ++i)
   {
-    const tPoint &start(bezier_curve.GetControlPoint(i - 1));
-    const tPoint &stop(bezier_curve.GetControlPoint(i));
+    const tPoint &start(bezier_curve.ControlPoints()[i - 1]);
+    const tPoint &stop(bezier_curve.ControlPoints()[i]);
 
     window.DrawLineNormalized(start.X(), start.Y(), stop.X(), stop.Y());
   }
@@ -128,10 +128,10 @@ void DrawControlPolygon(tWindow &window, const tBezierCurve &bezier_curve)
 
 void DrawControlPolygon(tWindow &window, const tSplineCurve &spline_curve)
 {
-  for (size_t i = 1; i < spline_curve.GetNumberOfControlPoints(); ++i)
+  for (size_t i = 1; i < spline_curve.NumberOfControlPoints(); ++i)
   {
-    const tPoint &start(spline_curve.GetControlPoint(i - 1));
-    const tPoint &stop(spline_curve.GetControlPoint(i));
+    const tPoint &start(spline_curve.ControlPoints()[i - 1]);
+    const tPoint &stop(spline_curve.ControlPoints()[i]);
 
     window.DrawLineNormalized(start.X(), start.Y(), stop.X(), stop.Y());
   }
@@ -152,7 +152,7 @@ void DrawBezierCurve(tWindow &window, const tBezierCurve &bezier_curve, float ep
 
 void DrawSplineCurve(tWindow &window, const tSplineCurve &spline_curve, float epsilon = 1.0E-6)
 {
-  for (size_t i = 0; i < spline_curve.GetNumberOfSegments(); ++i)
+  for (size_t i = 0; i < spline_curve.NumberOfSegments(); ++i)
   {
     DrawBezierCurve(window, spline_curve.GetBezierCurveForSegment(i), epsilon);
   }
@@ -197,7 +197,7 @@ int main(int argc, char **argv)
 
   std::cout << std::endl << "=== Control polygon and bounding box ===" << std::endl;
 
-  tBezierCurve bezier_curve(control_points);
+  tBezierCurve bezier_curve(control_points.begin(), control_points.end());
 
   window.Clear();
   window.SetColor(1);
@@ -268,7 +268,7 @@ int main(int argc, char **argv)
   control_points2.push_back(tPoint(0.6, 0.7));
   control_points2.push_back(tPoint(0.4, 0.9));
 
-  tBezierCurve bezier_curve2(control_points2);
+  tBezierCurve bezier_curve2(control_points2.begin(), control_points2.end());
 
   rrlib::math::tAngleDeg angle = -40;
   tPoint position = bezier_curve2.CenterOfGravity();
@@ -308,7 +308,7 @@ int main(int argc, char **argv)
   control_points.push_back(tPoint(0.7, 0.6));
   control_points.push_back(tPoint(0.9, 0.4));
 
-  tConcreteSplineCurve spline(control_points);
+  tConcreteSplineCurve spline(control_points.begin(), control_points.end());
 
   window.Clear();
   window.SetColor(1);

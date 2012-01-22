@@ -78,21 +78,6 @@ tBezierCurve<Tdimension, TElement, Tdegree>::tBezierCurve(TIterator begin, TIter
   }
 }
 
-template <size_t Tdimension, typename TElement, unsigned int Tdegree>
-template <typename TSTLContainer>
-tBezierCurve<Tdimension, TElement, Tdegree>::tBezierCurve(const TSTLContainer &control_points)
-{
-  std::cout << "control_points: " << control_points.size() << std::endl;
-  std::cout << "degree: " << Tdegree << std::endl;
-  std::cout << "expected number of points: " << this->NumberOfControlPoints() << std::endl;
-  static_assert(Tdegree > 0, "The degree of Bezier curves must be greater than zero");
-  assert(control_points.size() == this->NumberOfControlPoints());
-  for (size_t i = 0; i < control_points.size(); ++i)
-  {
-    this->control_points[i] = control_points[i];
-  }
-}
-
 //----------------------------------------------------------------------
 // tBezierCurve SetControlPoint
 //----------------------------------------------------------------------
@@ -239,7 +224,7 @@ const bool tBezierCurve<Tdimension, TElement, Tdegree>::GetIntersections(std::ve
 
   // compute the intersection using the baselines of the two control polygons
   tLine<Tdimension, TElement> own_line_segment(this->control_points[0], this->control_points[Tdegree]);
-  tLine<Tdimension, TElement> other_line_segment(other.GetControlPoint(0), other.GetControlPoint(Tother_degree));
+  tLine<Tdimension, TElement> other_line_segment(other.ControlPoints()[0], other.ControlPoints()[Tother_degree]);
   typename tShape::tPoint intersection_point;
   if (own_line_segment.GetIntersection(intersection_point, other_line_segment) && !math::IsEqual(intersection_point, intersection_points.back(), 0.001))
   {
@@ -298,8 +283,8 @@ const typename tShape<Tdimension, TElement>::tPoint tBezierCurve<Tdimension, TEl
 {
   tSubdivision subdivision(this->GetSubdivision());
 
-  tLineSegment<Tdimension, TElement> first_segment_base_line(subdivision.first.GetControlPoint(0), subdivision.first.GetControlPoint(Tdegree));
-  tLineSegment<Tdimension, TElement> second_segment_base_line(subdivision.second.GetControlPoint(0), subdivision.second.GetControlPoint(Tdegree));
+  tLineSegment<Tdimension, TElement> first_segment_base_line(subdivision.first.ControlPoints()[0], subdivision.first.ControlPoints()[Tdegree]);
+  tLineSegment<Tdimension, TElement> second_segment_base_line(subdivision.second.ControlPoints()[0], subdivision.second.ControlPoints()[Tdegree]);
 
   typename tShape::tPoint first_candidate = first_segment_base_line.GetClosestPoint(reference_point);
   typename tShape::tPoint second_candidate = second_segment_base_line.GetClosestPoint(reference_point);
@@ -407,7 +392,29 @@ void tBezierCurve<Tdimension, TElement, Tdegree>::UpdateCenterOfGravity(typename
   center_of_gravity /= this->NumberOfControlPoints();
 }
 
+//----------------------------------------------------------------------
+// Operators for rrlib_canvas
+//----------------------------------------------------------------------
+#ifdef _LIB_RRLIB_CANVAS_PRESENT_
 
+template <typename TElement>
+canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2, TElement, 2> &bezier_curve)
+{
+  canvas.StartPath(bezier_curve.ControlPoints()[0]);
+  canvas.AppendQuadraticBezierCurve(bezier_curve.ControlPoints() + 1, bezier_curve.ControlPoints() + 3);
+
+  return canvas;
+}
+
+template <typename TElement>
+canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2, TElement, 3> &bezier_curve)
+{
+  canvas.DrawCubicBezierCurve(bezier_curve.ControlPoints(), bezier_curve.ControlPoints() + 4);
+
+  return canvas;
+}
+
+#endif
 
 //----------------------------------------------------------------------
 // End of namespace declaration
