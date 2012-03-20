@@ -326,10 +326,10 @@ inline canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tSplineC
   canvas.StartPath(bezier_curve.ControlPoints()[0]);
   for (unsigned int i = 1; i < number_of_segments; ++i)
   {
-    canvas.AppendCubicBezierCurve(bezier_curve.ControlPoints() + 1, bezier_curve.ControlPoints() + 4);
+    canvas.AppendCubicBezierCurve(bezier_curve.ControlPoints()[1], bezier_curve.ControlPoints()[2], bezier_curve.ControlPoints()[3]);
     bezier_curve = spline.GetBezierCurveForSegment(i);
   }
-  canvas.AppendCubicBezierCurve(bezier_curve.ControlPoints() + 1, bezier_curve.ControlPoints() + 4);
+  canvas.AppendCubicBezierCurve(bezier_curve.ControlPoints()[1], bezier_curve.ControlPoints()[2], bezier_curve.ControlPoints()[3]);
 
   return canvas;
 }
