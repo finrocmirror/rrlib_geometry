@@ -68,8 +68,8 @@ typedef rrlib::geometry::tLine<2, tElement> tLine;
 typedef rrlib::geometry::tLineSegment<2, tElement> tLineSegment;
 typedef rrlib::geometry::tBezierCurve<2, tElement, 3> tBezierCurve;
 typedef rrlib::geometry::tSplineCurve<2, tElement, 3> tSplineCurve;
-//typedef rrlib::geometry::tUniformBSplineCurve<2, tElement> tConcreteSplineCurve;
-typedef rrlib::geometry::tCardinalSplineCurve<2, tElement> tConcreteSplineCurve;
+typedef rrlib::geometry::tUniformBSplineCurve<2, tElement> tConcreteSplineCurve;
+//typedef rrlib::geometry::tCardinalSplineCurve<2, tElement> tConcreteSplineCurve;
 
 //----------------------------------------------------------------------
 // Const values
