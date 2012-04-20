@@ -89,7 +89,7 @@ public:
 
   void SetTension(double tension);
 
-  virtual const typename tSplineCurve::tBezierCurve GetBezierCurveForSegment(unsigned int i) const;
+  virtual std::shared_ptr<const typename tSplineCurve::tBezierCurve> CreateBezierCurveForSegment(unsigned int i) const;
 
 //----------------------------------------------------------------------
 // Private fields and methods
@@ -97,6 +97,9 @@ public:
 private:
 
   double tension;
+
+  virtual unsigned int GetSegmentForParameter(typename tSplineCurve::tParameter t);
+  virtual typename tSplineCurve::tParameter GetLocalParameter(typename tSplineCurve::tParameter t);
 
 };
 

@@ -82,10 +82,30 @@ void tUniformBSplineCurve<Tdimension, TElement>::SetTension(double tension)
 }
 
 //----------------------------------------------------------------------
-// tUniformBSplineCurve GetBezierCurveForSegment
+// tUniformBSplineCurve GetSegmentForParameter
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-const typename tSplineCurve<Tdimension, TElement, 3>::tBezierCurve tUniformBSplineCurve<Tdimension, TElement>::GetBezierCurveForSegment(unsigned int i) const
+unsigned int tUniformBSplineCurve<Tdimension, TElement>::GetSegmentForParameter(typename tSplineCurve::tParameter t)
+{
+  assert((0 <= t) && (t <= this->NumberOfSegments()));
+  return static_cast<unsigned int>(t < this->NumberOfSegments() ? t : t - 1.0);
+}
+
+//----------------------------------------------------------------------
+// tUniformBSplineCurve GetLocalParameter
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement>
+typename tSplineCurve<Tdimension, TElement, 3>::tParameter tUniformBSplineCurve<Tdimension, TElement>::GetLocalParameter(typename tSplineCurve::tParameter t)
+{
+  assert((0 <= t) && (t <= this->NumberOfSegments()));
+  return t < this->NumberOfSegments() ? t - std::trunc(t) : 1.0;
+}
+
+//----------------------------------------------------------------------
+// tUniformBSplineCurve CreateBezierCurveForSegment
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement>
+std::shared_ptr<const typename tSplineCurve<Tdimension, TElement, 3>::tBezierCurve> tUniformBSplineCurve<Tdimension, TElement>::CreateBezierCurveForSegment(unsigned int i) const
 {
   typename tShape::tPoint bezier_control_points[4];
 
@@ -94,8 +114,8 @@ const typename tSplineCurve<Tdimension, TElement, 3>::tBezierCurve tUniformBSpli
   bezier_control_points[2] = (1.0 - this->tension) / 3.0 * this->ControlPoints()[i + 1] + (2.0 + this->tension) / 3.0 * this->ControlPoints()[i + 2];
   bezier_control_points[3] = (1.0 - this->tension) / 6.0 * (this->ControlPoints()[i + 1] + this->ControlPoints()[i + 3]) + (2.0 + this->tension) / 3.0 * this->ControlPoints()[i + 2];
 
-  return typename tSplineCurve::tBezierCurve(bezier_control_points, bezier_control_points + 4);
-};
+  return std::shared_ptr<const typename tSplineCurve::tBezierCurve>(new typename tSplineCurve::tBezierCurve(bezier_control_points, bezier_control_points + 4));
+}
 
 //----------------------------------------------------------------------
 // End of namespace declaration

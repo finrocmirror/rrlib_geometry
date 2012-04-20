@@ -180,6 +180,9 @@ canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2,
 template <typename TElement>
 canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2, TElement, 3> &bezier_curve);
 
+template <typename TElement, unsigned int Tdegree>
+canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2, TElement, Tdegree> &bezier_curve);
+
 #endif
 
 //----------------------------------------------------------------------

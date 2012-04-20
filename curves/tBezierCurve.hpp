@@ -401,7 +401,7 @@ template <typename TElement>
 canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2, TElement, 2> &bezier_curve)
 {
   canvas.StartPath(bezier_curve.ControlPoints()[0]);
-  canvas.AppendQuadraticBezierCurve(bezier_curve.ControlPoints() + 1, bezier_curve.ControlPoints() + 3);
+  canvas.AppendQuadraticBezierCurve(bezier_curve.ControlPoints()[1], bezier_curve.ControlPoints()[2]);
 
   return canvas;
 }
@@ -410,6 +410,21 @@ template <typename TElement>
 canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2, TElement, 3> &bezier_curve)
 {
   canvas.DrawCubicBezierCurve(bezier_curve.ControlPoints(), bezier_curve.ControlPoints() + 4);
+
+  return canvas;
+}
+
+template <typename TElement, unsigned int Tdegree>
+canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2, TElement, Tdegree> &bezier_curve)
+{
+  if (bezier_curve.GetTwist() < 1E-6)
+  {
+    canvas.DrawLineSegment(bezier_curve.ControlPoints()[0], bezier_curve.ControlPoints()[Tdegree - 1]);
+    return canvas;
+  }
+
+  typename tBezierCurve<2, TElement, Tdegree>::tSubdivision subdivision(bezier_curve.GetSubdivision());
+  canvas << subdivision.first << subdivision.second;
 
   return canvas;
 }

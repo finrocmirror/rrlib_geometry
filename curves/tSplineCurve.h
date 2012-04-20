@@ -40,6 +40,8 @@
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
 //----------------------------------------------------------------------
+#include <memory>
+
 #ifdef _LIB_RRLIB_CANVAS_PRESENT_
 #include "rrlib/canvas/tCanvas2D.h"
 #include "rrlib/canvas/tCanvas3D.h"
@@ -118,11 +120,11 @@ public:
 
   const typename tShape::tPoint operator()(tParameter t) const;
 
-  const tBezierCurve GetBezierCurveForParameter(tParameter t) const;
+  std::shared_ptr<const tBezierCurve> GetBezierCurveForParameter(tParameter t) const;
 
-  const tBezierCurve GetBezierCurveForParameter(tParameter t, tParameter &local_t) const;
+  std::shared_ptr<const tBezierCurve> GetBezierCurveForParameter(tParameter t, tParameter &local_t) const;
 
-  virtual const tBezierCurve GetBezierCurveForSegment(unsigned int i) const = 0;
+  std::shared_ptr<const tBezierCurve> GetBezierCurveForSegment(unsigned int i) const;
 
   template <unsigned int Tother_degree>
   void GetIntersections(std::vector<typename tShape::tPoint> &intersection_points, std::vector<tParameter> &intersection_parameters,
@@ -142,14 +144,26 @@ public:
   virtual tSplineCurve &Transform(const math::tMatrix < Tdimension + 1, Tdimension + 1, TElement > &transformation);
 
 //----------------------------------------------------------------------
+// Protected methods
+//----------------------------------------------------------------------
+protected:
+
+  void SetChanged();
+
+//----------------------------------------------------------------------
 // Private fields and methods
 //----------------------------------------------------------------------
 private:
 
   std::vector<typename tShape::tPoint> control_points;
+  mutable std::vector<std::shared_ptr<const tBezierCurve>> bezier_curve_cache;
 
   virtual void UpdateBoundingBox(typename tShape::tBoundingBox &bounding_box) const;
   virtual void UpdateCenterOfGravity(typename tShape::tPoint &center_of_gravity) const;
+
+  virtual unsigned int GetSegmentForParameter(tParameter t) = 0;
+  virtual tParameter GetLocalParameter(tParameter t) = 0;
+  virtual std::shared_ptr<const tBezierCurve> CreateBezierCurveForSegment(unsigned int i) const = 0;
 
 };
 

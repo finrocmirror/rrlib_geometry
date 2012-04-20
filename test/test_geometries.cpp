@@ -154,7 +154,7 @@ void DrawSplineCurve(tWindow &window, const tSplineCurve &spline_curve, float ep
 {
   for (size_t i = 0; i < spline_curve.NumberOfSegments(); ++i)
   {
-    DrawBezierCurve(window, spline_curve.GetBezierCurveForSegment(i), epsilon);
+    DrawBezierCurve(window, *spline_curve.GetBezierCurveForSegment(i), epsilon);
   }
 }
 
