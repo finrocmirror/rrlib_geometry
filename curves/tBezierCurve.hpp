@@ -419,7 +419,7 @@ canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2,
 {
   if (bezier_curve.GetTwist() < 1E-6)
   {
-    canvas.DrawLineSegment(bezier_curve.ControlPoints()[0], bezier_curve.ControlPoints()[Tdegree - 1]);
+    canvas.DrawLineSegment(bezier_curve.ControlPoints()[0], bezier_curve.ControlPoints()[Tdegree]);
     return canvas;
   }
 
