@@ -61,28 +61,28 @@ namespace geometry
 //----------------------------------------------------------------------
 // tBSplineCurve constructor
 //----------------------------------------------------------------------
-template<size_t TDimension, typename TElement, unsigned int TDegree>
+template<size_t Tdimension, typename TElement, unsigned int Tdegree>
 template<typename TIterator, typename TKnotIterator>
-tBSplineCurve<TDimension, TElement, TDegree>::tBSplineCurve(TIterator control_points_begin, TIterator control_points_end, TKnotIterator knots_begin, TKnotIterator knots_end) :
+tBSplineCurve<Tdimension, TElement, Tdegree>::tBSplineCurve(TIterator control_points_begin, TIterator control_points_end, TKnotIterator knots_begin, TKnotIterator knots_end) :
   tSplineCurve(control_points_begin, control_points_end)
 {
   // copy knots
   std::copy(knots_begin, knots_end, std::back_inserter(this->knots));
-  assert(this->knots.size() == this->ControlPoints().size() + TDegree + 1);
+  assert(this->knots.size() == this->ControlPoints().size() + Tdegree + 1);
   this->CalculateBezierControlPoints();
 }
 
-template<size_t TDimension, typename TElement, unsigned int TDegree>
+template<size_t Tdimension, typename TElement, unsigned int Tdegree>
 template<typename TIterator>
-tBSplineCurve<TDimension, TElement, TDegree>::tBSplineCurve(TIterator begin, TIterator end) :
+tBSplineCurve<Tdimension, TElement, Tdegree>::tBSplineCurve(TIterator begin, TIterator end) :
   tSplineCurve(begin, end)
 {
   this->CalculateKnotVector();
   this->CalculateBezierControlPoints();
 }
 
-//template<size_t TDimension, typename TElement, unsigned int TDegree>
-//void tBSplineCurve<TDimension, TElement, TDegree>::AppendControlPoint(const typename tShape::tPoint &point)
+//template<size_t Tdimension, typename TElement, unsigned int Tdegree>
+//void tBSplineCurve<Tdimension, TElement, Tdegree>::AppendControlPoint(const typename tShape::tPoint &point)
 //{
 //  tSplineCurve::AppendControlPoint(point);
 //  this->CalculateKnotVector();
@@ -100,25 +100,25 @@ void tBSplineCurve<Tdimension, TElement, Tdegree>::SetChanged()
   this->CalculateBezierControlPoints();
 }
 
-template<size_t TDimension, typename TElement, unsigned int TDegree>
-void tBSplineCurve<TDimension, TElement, TDegree>::CalculateKnotVector()
+template<size_t Tdimension, typename TElement, unsigned int Tdegree>
+void tBSplineCurve<Tdimension, TElement, Tdegree>::CalculateKnotVector()
 {
   this->knots.clear();
-  assert(this->NumberOfControlPoints() > TDegree);
+  assert(this->NumberOfControlPoints() > Tdegree);
   // calculate knot vector
-  unsigned int length = this->NumberOfControlPoints() + TDegree + 1;
+  unsigned int length = this->NumberOfControlPoints() + Tdegree + 1;
   this->knots.reserve(length);
 
   for (unsigned int i = 0; i < length; ++i)
   {
-    if (i < TDegree + 1)
+    if (i < Tdegree + 1)
     {
       this->knots.push_back(0);
     }
-    else if ((TDegree + 1) <= i && i <= this->NumberOfControlPoints())
+    else if ((Tdegree + 1) <= i && i <= this->NumberOfControlPoints())
     {
       // inner knot vector (uniform)
-      this->knots.push_back(1.0 / (this->NumberOfControlPoints() - TDegree) * (i - TDegree));
+      this->knots.push_back(1.0 / (this->NumberOfControlPoints() - Tdegree) * (i - Tdegree));
     }
     else if (i > this->NumberOfControlPoints())
     {
@@ -127,12 +127,12 @@ void tBSplineCurve<TDimension, TElement, TDegree>::CalculateKnotVector()
   }
 }
 
-template<size_t TDimension, typename TElement, unsigned int TDegree>
-void tBSplineCurve<TDimension, TElement, TDegree>::CalculateBezierControlPoints()
+template<size_t Tdimension, typename TElement, unsigned int Tdegree>
+void tBSplineCurve<Tdimension, TElement, Tdegree>::CalculateBezierControlPoints()
 {
   this->bezier_control_points.clear();
   std::vector<double> new_knots;
-  new_knots.reserve(this->knots.size() * TDegree);
+  new_knots.reserve(this->knots.size() * Tdegree);
   std::copy(this->knots.begin(), this->knots.end(), std::back_inserter(new_knots));
   std::copy(this->ControlPoints().begin(), this->ControlPoints().end(), std::back_inserter(this->bezier_control_points));
 
@@ -147,14 +147,14 @@ void tBSplineCurve<TDimension, TElement, TDegree>::CalculateBezierControlPoints(
     }
     else
     {
-      if (multiplicity < TDegree)
+      if (multiplicity < Tdegree)
       {
-        for (unsigned int s = multiplicity; s < TDegree; s++)
+        for (unsigned int s = multiplicity; s < Tdegree; s++)
         {
           this->bezier_control_points = InsertKnot((it - new_knots.begin()) - multiplicity, new_knots, knot, this->bezier_control_points);
           new_knots.insert(it, knot);
         }
-        it += TDegree - multiplicity;
+        it += Tdegree - multiplicity;
       }
       if (it < new_knots.end() - 1)
       {
@@ -165,20 +165,20 @@ void tBSplineCurve<TDimension, TElement, TDegree>::CalculateBezierControlPoints(
   }
 }
 
-template<size_t Tdimension, typename TElement, unsigned int TDegree>
-std::vector<typename tBSplineCurve<Tdimension, TElement, TDegree>::tShape::tPoint> tBSplineCurve<Tdimension, TElement, TDegree>::InsertKnot(int at, const std::vector<double> &knots_before_insertion, double knot, const std::vector <
+template<size_t Tdimension, typename TElement, unsigned int Tdegree>
+std::vector<typename tBSplineCurve<Tdimension, TElement, Tdegree>::tShape::tPoint> tBSplineCurve<Tdimension, TElement, Tdegree>::InsertKnot(int at, const std::vector<double> &knots_before_insertion, double knot, const std::vector <
     typename tShape::tPoint > &control_points) const
 {
   std::vector<typename tShape::tPoint> new_control_points;
   new_control_points.reserve(control_points.size() + 1);
 
-  // copy unaffected points (index < at-TDegree+1)
-  std::copy(control_points.begin(), control_points.begin() + at - TDegree + 1, std::back_inserter(new_control_points));
+  // copy unaffected points (index < at-Tdegree+1)
+  std::copy(control_points.begin(), control_points.begin() + at - Tdegree + 1, std::back_inserter(new_control_points));
 
   // recalculate control points affected by knot insertion
-  for (int i = at - TDegree + 1; i <= at; i++)
+  for (int i = at - Tdegree + 1; i <= at; i++)
   {
-    double a = (knot - knots_before_insertion[i]) / (knots_before_insertion[i + TDegree] - knots_before_insertion[i]);
+    double a = (knot - knots_before_insertion[i]) / (knots_before_insertion[i + Tdegree] - knots_before_insertion[i]);
     new_control_points.push_back((1 - a) * control_points[i - 1] + a * control_points[i]);
   }
 
