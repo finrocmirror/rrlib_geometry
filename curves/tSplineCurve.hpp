@@ -100,9 +100,10 @@ void tSplineCurve<Tdimension, TElement, Tdegree>::AppendControlPoint(const typen
 // tSplineCurve InsertControlPoint
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
-void tSplineCurve<Tdimension, TElement, Tdegree>::InsertControlPoint(typename std::vector<typename tShape::tPoint>::iterator position, const typename tShape::tPoint &point)
+void tSplineCurve<Tdimension, TElement, Tdegree>::InsertControlPoint(size_t position, const typename tShape::tPoint &point)
 {
-  this->control_points.insert(position, point);
+  assert(position < this->control_points.size());
+  this->control_points.insert(this->control_points.begin() + position, point);
   this->SetChanged();
   this->bezier_curve_cache.emplace_back();
 };

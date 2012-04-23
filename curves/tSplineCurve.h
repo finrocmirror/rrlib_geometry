@@ -116,7 +116,7 @@ public:
 
   void AppendControlPoint(const typename tShape::tPoint &point);
 
-  void InsertControlPoint(typename std::vector<typename tShape::tPoint>::iterator position, const typename tShape::tPoint &point);
+  void InsertControlPoint(size_t position, const typename tShape::tPoint &point);
 
   const typename tShape::tPoint operator()(tParameter t) const;
 
@@ -148,7 +148,7 @@ public:
 //----------------------------------------------------------------------
 protected:
 
-  void SetChanged();
+  virtual void SetChanged();
 
 //----------------------------------------------------------------------
 // Private fields and methods
