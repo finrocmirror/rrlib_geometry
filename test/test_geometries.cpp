@@ -262,13 +262,7 @@ int main(int argc, char **argv)
 
   std::cout << std::endl << "=== Bezier curve intersects curve ===" << std::endl;
 
-  std::vector<tPoint> control_points2;
-  control_points2.push_back(tPoint(0.2, 0.1));
-  control_points2.push_back(tPoint(0.5, 0.3));
-  control_points2.push_back(tPoint(0.6, 0.7));
-  control_points2.push_back(tPoint(0.4, 0.9));
-
-  tBezierCurve bezier_curve2(control_points2.begin(), control_points2.end());
+  tBezierCurve bezier_curve2(tPoint(0.2, 0.1), tPoint(0.5, 0.3), tPoint(0.6, 0.7), tPoint(0.4, 0.9));
 
   rrlib::math::tAngleDeg angle = -40;
   tPoint position = bezier_curve2.CenterOfGravity();
