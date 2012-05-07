@@ -47,6 +47,8 @@
 #include "rrlib/canvas/tCanvas3D.h"
 #endif
 
+#include "rrlib/util/variadic_templates.h"
+
 //----------------------------------------------------------------------
 // Internal includes with ""
 //----------------------------------------------------------------------
