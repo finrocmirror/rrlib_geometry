@@ -117,6 +117,15 @@ const typename tShape<Tdimension, TElement>::tPoint &tShape<Tdimension, TElement
 }
 
 //----------------------------------------------------------------------
+// tShape SetChanged
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement>
+void tShape<Tdimension, TElement>::SetChanged()
+{
+  this->changed = true;
+}
+
+//----------------------------------------------------------------------
 // tShape ResetMetaInformation
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>

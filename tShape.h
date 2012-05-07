@@ -104,10 +104,7 @@ public:
 //----------------------------------------------------------------------
 protected:
 
-  inline void SetChanged()
-  {
-    this->changed = true;
-  }
+  virtual void SetChanged();
 
 //----------------------------------------------------------------------
 // Private fields and methods

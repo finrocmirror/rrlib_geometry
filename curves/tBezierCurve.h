@@ -104,6 +104,9 @@ public:
   template <typename TIterator>
   tBezierCurve(TIterator begin, TIterator end);
 
+  template <typename ... TPoints>
+  tBezierCurve(const typename tShape::tPoint &p1, const typename tShape::tPoint &p2, const TPoints &... rest);
+
   inline const typename tShape::tPoint *ControlPoints() const
   {
     return this->control_points;

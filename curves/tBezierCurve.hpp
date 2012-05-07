@@ -67,15 +67,24 @@ namespace geometry
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 template <typename TIterator>
 tBezierCurve<Tdimension, TElement, Tdegree>::tBezierCurve(TIterator begin, TIterator end)
-  : tShape()
 {
   static_assert(Tdegree > 0, "The degree of Bezier curves must be greater than zero");
-  assert(static_cast<size_t>(std::distance(begin, end)) == this->NumberOfControlPoints());
+  assert(static_cast<size_t>(std::distance(begin, end)) == this->NumberOfControlPoints() && "A Bezier curve must have degree + 1 control points");
   size_t index = 0;
   for (TIterator it = begin; it != end; ++it)
   {
     this->control_points[index++] = *it;
   }
+}
+
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+template <typename ... TPoints>
+tBezierCurve<Tdimension, TElement, Tdegree>::tBezierCurve(const typename tShape::tPoint &p1, const typename tShape::tPoint &p2, const TPoints &... rest)
+{
+  static_assert(Tdegree > 0, "The degree of Bezier curves must be greater than zero");
+  static_assert(sizeof...(rest) + 1 == Tdegree, "A Bezier curve must have degree + 1 control points");
+  size_t index = 0;
+  util::ProcessVariadicValues<typename tShape::tPoint>([this, index](const typename tShape::tPoint & x) mutable { this->control_points[index++] = x; }, p1, p2, rest...);
 }
 
 //----------------------------------------------------------------------
@@ -397,34 +406,10 @@ void tBezierCurve<Tdimension, TElement, Tdegree>::UpdateCenterOfGravity(typename
 //----------------------------------------------------------------------
 #ifdef _LIB_RRLIB_CANVAS_PRESENT_
 
-template <typename TElement>
-canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2, TElement, 2> &bezier_curve)
-{
-  canvas.StartPath(bezier_curve.ControlPoints()[0]);
-  canvas.AppendQuadraticBezierCurve(bezier_curve.ControlPoints()[1], bezier_curve.ControlPoints()[2]);
-
-  return canvas;
-}
-
-template <typename TElement>
-canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2, TElement, 3> &bezier_curve)
-{
-  canvas.DrawCubicBezierCurve(bezier_curve.ControlPoints(), bezier_curve.ControlPoints() + 4);
-
-  return canvas;
-}
-
 template <typename TElement, unsigned int Tdegree>
 canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2, TElement, Tdegree> &bezier_curve)
 {
-  if (bezier_curve.GetTwist() < 1E-6)
-  {
-    canvas.DrawLineSegment(bezier_curve.ControlPoints()[0], bezier_curve.ControlPoints()[Tdegree]);
-    return canvas;
-  }
-
-  typename tBezierCurve<2, TElement, Tdegree>::tSubdivision subdivision(bezier_curve.GetSubdivision());
-  canvas << subdivision.first << subdivision.second;
+  canvas.DrawBezierCurve(Tdegree, bezier_curve.ControlPoints(), bezier_curve.ControlPoints() + bezier_curve.NumberOfControlPoints());
 
   return canvas;
 }

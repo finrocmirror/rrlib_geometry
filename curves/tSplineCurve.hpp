@@ -69,8 +69,19 @@ template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 template <typename TIterator>
 tSplineCurve<Tdimension, TElement, Tdegree>::tSplineCurve(TIterator begin, TIterator end)
 {
+  static_assert(Tdegree > 0, "The degree of spline curves must be greater than zero");
   std::copy(begin, end, std::back_inserter(this->control_points));
-  assert(control_points.size() > Tdegree);
+  assert(control_points.size() > Tdegree && "A spline curve needs at least degree + 1 control points");
+  this->bezier_curve_cache.resize(this->NumberOfSegments());
+}
+
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+template <typename ... TPoints>
+tSplineCurve<Tdimension, TElement, Tdegree>::tSplineCurve(const typename tShape::tPoint &p1, const typename tShape::tPoint &p2, const TPoints &... rest)
+{
+  static_assert(Tdegree > 0, "The degree of spline curves must be greater than zero");
+  static_assert(sizeof...(rest) + 2 > Tdegree, "A spline curve needs at least degree + 1 control points");
+  util::ProcessVariadicValues<typename tShape::tPoint>([this](const typename tShape::tPoint & x) mutable { this->control_points.push_back(x); }, p1, p2, rest...);
   this->bezier_curve_cache.resize(this->NumberOfSegments());
 }
 
@@ -100,9 +111,10 @@ void tSplineCurve<Tdimension, TElement, Tdegree>::AppendControlPoint(const typen
 // tSplineCurve InsertControlPoint
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
-void tSplineCurve<Tdimension, TElement, Tdegree>::InsertControlPoint(size_t at, const typename tShape::tPoint &point)
+void tSplineCurve<Tdimension, TElement, Tdegree>::InsertControlPoint(size_t position, const typename tShape::tPoint &point)
 {
-  this->control_points.insert(this->control_points.begin() + at, point);
+  assert(position < this->control_points.size());
+  this->control_points.insert(this->control_points.begin() + position, point);
   this->SetChanged();
   this->bezier_curve_cache.emplace_back();
 };
@@ -347,38 +359,6 @@ void tSplineCurve<Tdimension, TElement, Tdegree>::UpdateCenterOfGravity(typename
 // Operators for rrlib_canvas
 //----------------------------------------------------------------------
 #ifdef _LIB_RRLIB_CANVAS_PRESENT_
-
-template <typename TElement>
-inline canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tSplineCurve<2, TElement, 2> &spline_curve)
-{
-  unsigned int number_of_segments = spline_curve.NumberOfSegments();
-  auto bezier_curve = spline_curve.GetBezierCurveForSegment(0);
-  canvas.StartPath(bezier_curve->ControlPoints()[0]);
-  for (unsigned int i = 1; i < number_of_segments; ++i)
-  {
-    canvas.AppendQuadraticBezierCurve(bezier_curve->ControlPoints()[1], bezier_curve->ControlPoints()[2]);
-    bezier_curve = spline_curve.GetBezierCurveForSegment(i);
-  }
-  canvas.AppendQuadraticBezierCurve(bezier_curve->ControlPoints()[1], bezier_curve->ControlPoints()[2]);
-
-  return canvas;
-}
-
-template <typename TElement>
-inline canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tSplineCurve<2, TElement, 3> &spline_curve)
-{
-  unsigned int number_of_segments = spline_curve.NumberOfSegments();
-  auto bezier_curve = spline_curve.GetBezierCurveForSegment(0);
-  canvas.StartPath(bezier_curve->ControlPoints()[0]);
-  for (unsigned int i = 1; i < number_of_segments; ++i)
-  {
-    canvas.AppendCubicBezierCurve(bezier_curve->ControlPoints()[1], bezier_curve->ControlPoints()[2], bezier_curve->ControlPoints()[3]);
-    bezier_curve = spline_curve.GetBezierCurveForSegment(i);
-  }
-  canvas.AppendCubicBezierCurve(bezier_curve->ControlPoints()[1], bezier_curve->ControlPoints()[2], bezier_curve->ControlPoints()[3]);
-
-  return canvas;
-}
 
 template <typename TElement, unsigned int Tdegree>
 inline canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tSplineCurve<2, TElement, Tdegree> &spline_curve)

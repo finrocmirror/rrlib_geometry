@@ -97,6 +97,9 @@ public:
   template <typename TIterator>
   tSplineCurve(TIterator begin, TIterator end);
 
+  template <typename ... TPoints>
+  tSplineCurve(const typename tShape::tPoint &p1, const typename tShape::tPoint &p2, const TPoints &... rest);
+
   inline const size_t NumberOfControlPoints() const
   {
     return this->control_points.size();
@@ -116,7 +119,7 @@ public:
 
   void AppendControlPoint(const typename tShape::tPoint &point);
 
-  void InsertControlPoint(size_t at, const typename tShape::tPoint &point);
+  void InsertControlPoint(size_t position, const typename tShape::tPoint &point);
 
   const typename tShape::tPoint operator()(tParameter t) const;
 
