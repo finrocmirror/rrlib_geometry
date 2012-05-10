@@ -410,7 +410,7 @@ void tBezierCurve<Tdimension, TElement, Tdegree>::UpdateCenterOfGravity(typename
 template <typename TElement, unsigned int Tdegree>
 canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2, TElement, Tdegree> &bezier_curve)
 {
-  canvas.DrawBezierCurve(Tdegree, bezier_curve.ControlPoints(), bezier_curve.ControlPoints() + bezier_curve.NumberOfControlPoints());
+  canvas.DrawBezierCurve(bezier_curve.ControlPoints(), bezier_curve.ControlPoints() + bezier_curve.NumberOfControlPoints());
 
   return canvas;
 }
