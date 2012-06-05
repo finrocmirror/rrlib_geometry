@@ -293,27 +293,45 @@ const typename tShape<Tdimension, TElement>::tPoint tBezierCurve<Tdimension, TEl
 {
   tSubdivision subdivision(this->GetSubdivision());
 
-  tLineSegment<Tdimension, TElement> first_segment_base_line(subdivision.first.ControlPoints()[0], subdivision.first.ControlPoints()[Tdegree]);
-  tLineSegment<Tdimension, TElement> second_segment_base_line(subdivision.second.ControlPoints()[0], subdivision.second.ControlPoints()[Tdegree]);
+  double squared_distance_to_first_candidate = std::numeric_limits<double>::max();
+  double squared_distance_to_second_candidate = std::numeric_limits<double>::max();
 
-  typename tShape::tPoint first_candidate = first_segment_base_line.GetClosestPoint(reference_point);
-  typename tShape::tPoint second_candidate = second_segment_base_line.GetClosestPoint(reference_point);
+  for (unsigned int i = 0; i < Tdegree; ++i)
+  {
+    tLineSegment<Tdimension, TElement> first_segment_base_line(subdivision.first.ControlPoints()[i], subdivision.first.ControlPoints()[i + 1]);
+    tLineSegment<Tdimension, TElement> second_segment_base_line(subdivision.second.ControlPoints()[i], subdivision.second.ControlPoints()[i + 1]);
 
-  double squared_distance_to_first_candidate = (reference_point - first_candidate).SquaredLength();
-  double squared_distance_to_second_candidate = (reference_point - second_candidate).SquaredLength();
+    typename tShape::tPoint first_candidate = first_segment_base_line.GetClosestPoint(reference_point);
+    typename tShape::tPoint second_candidate = second_segment_base_line.GetClosestPoint(reference_point);
+
+    double squared_distance_to_first = (reference_point - first_candidate).SquaredLength();
+    double squared_distance_to_second = (reference_point - second_candidate).SquaredLength();
+
+    if (squared_distance_to_first < squared_distance_to_first_candidate)
+    {
+      squared_distance_to_first_candidate = squared_distance_to_first;
+    }
+
+    if (squared_distance_to_second < squared_distance_to_second_candidate)
+    {
+      squared_distance_to_second_candidate = squared_distance_to_second;
+    }
+  }
 
   if (squared_distance_to_first_candidate < squared_distance_to_second_candidate)
   {
     if (subdivision.first.GetTwist() < 1E-6)
     {
-      return first_candidate;
+      tLineSegment<Tdimension, TElement> first_segment_base_line(subdivision.first.ControlPoints()[0], subdivision.first.ControlPoints()[Tdegree]);
+      return first_segment_base_line.GetClosestPoint(reference_point);
     }
     return subdivision.first.GetClosestPoint(reference_point);
   }
 
   if (subdivision.second.GetTwist() < 1E-6)
   {
-    return second_candidate;
+    tLineSegment<Tdimension, TElement> second_segment_base_line(subdivision.second.ControlPoints()[0], subdivision.second.ControlPoints()[Tdegree]);
+    return second_segment_base_line.GetClosestPoint(reference_point);
   }
   return subdivision.second.GetClosestPoint(reference_point);
 }
