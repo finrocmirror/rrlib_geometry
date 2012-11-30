@@ -306,7 +306,7 @@ tSplineCurve<Tdimension, TElement, Tdegree> &tSplineCurve<Tdimension, TElement, 
       rotation[row][column] = transformation[row][column];
     }
   }
-  assert(math::IsEqual(rotation.Determinant(), 0));
+  assert(math::IsEqual(rotation.Determinant(), 1));
 #endif
 
   for (typename std::vector<typename tShape::tPoint>::iterator it = this->control_points.begin(); it != this->control_points.end(); ++it)

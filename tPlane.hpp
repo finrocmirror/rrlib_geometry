@@ -146,7 +146,7 @@ tPlane<Tdimension, TElement> &tPlane<Tdimension, TElement>::Translate(const math
 template <size_t Tdimension, typename TElement>
 tPlane<Tdimension, TElement> &tPlane<Tdimension, TElement>::Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation)
 {
-  assert(math::IsEqual(rotation.Determinant(), 0));
+  assert(math::IsEqual(rotation.Determinant(), 1));
   this->support = rotation * this->support;
   this->normal = rotation * this->normal;
   this->SetChanged();
@@ -174,7 +174,7 @@ tPlane<Tdimension, TElement> &tPlane<Tdimension, TElement>::Transform(const math
       rotation[row][column] = transformation[row][column];
     }
   }
-  assert(math::IsEqual(rotation.Determinant(), 0));
+  assert(math::IsEqual(rotation.Determinant(), 1));
 
   this->support = transformation.MultiplyHomogeneously(this->support);
   this->normal = rotation * this->normal;
