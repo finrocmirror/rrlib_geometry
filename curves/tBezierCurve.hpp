@@ -366,7 +366,7 @@ tBezierCurve<Tdimension, TElement, Tdegree> &tBezierCurve<Tdimension, TElement, 
       rotation[row][column] = transformation[row][column];
     }
   }
-  assert(math::IsEqual(rotation.Determinant(), 0));
+  assert(math::IsEqual(rotation.Determinant(), 1));
 #endif
 
   for (size_t i = 0; i < this->NumberOfControlPoints(); ++i)
