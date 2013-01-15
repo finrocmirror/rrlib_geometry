@@ -177,8 +177,8 @@ private:
 //----------------------------------------------------------------------
 #ifdef _LIB_RRLIB_CANVAS_PRESENT_
 
-template <typename TElement>
-inline canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tSplineCurve<2, TElement, 3> &spline);
+template <typename TElement, unsigned int Tdegree>
+inline canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tSplineCurve<2, TElement, Tdegree> &spline);
 
 #endif
 
