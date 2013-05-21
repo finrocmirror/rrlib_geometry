@@ -120,6 +120,18 @@ void tSplineCurve<Tdimension, TElement, Tdegree>::InsertControlPoint(size_t posi
 };
 
 //----------------------------------------------------------------------
+// tSplineCurve SetControlPoints
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+template <typename TIterator>
+void tSplineCurve<Tdimension, TElement, Tdegree>::SetControlPoints(TIterator begin, TIterator end)
+{
+  this->control_points.assign(begin, end);
+  assert(this->control_points.size() > Tdegree && "A spline curve needs at least degree + 1 control points");
+  this->SetChanged();
+}
+
+//----------------------------------------------------------------------
 // tSplineCurve Evaluation: operator ()
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
@@ -375,7 +387,43 @@ inline canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tSplineC
 #endif
 
 //----------------------------------------------------------------------
+// Operators for rrlib_serialization
+//----------------------------------------------------------------------
+#ifdef _LIB_RRLIB_SERIALIZATION_PRESENT_
+
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+serialization::tOutputStream &operator << (serialization::tOutputStream &stream, const tSplineCurve<Tdimension, TElement, Tdegree> &spline)
+{
+  size_t number_of_control_points = spline.NumberOfControlPoints();
+  stream << number_of_control_points;
+  for (size_t i = 0; i < number_of_control_points; ++i)
+  {
+    stream << spline.ControlPoints()[i];
+  }
+  return stream;
+}
+
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+serialization::tInputStream &operator >> (serialization::tInputStream &stream, tSplineCurve<Tdimension, TElement, Tdegree> &spline)
+{
+  size_t number_of_control_points;
+  stream >> number_of_control_points;
+  tPoint<Tdimension, TElement> control_points[number_of_control_points];
+  for (size_t i = 0; i < number_of_control_points; ++i)
+  {
+    stream >> control_points[i];
+  }
+  spline.SetControlPoints(control_points, control_points + number_of_control_points);
+  return stream;
+}
+
+#endif
+
+//----------------------------------------------------------------------
 // End of namespace declaration
 //----------------------------------------------------------------------
 }
 }
+
+
+

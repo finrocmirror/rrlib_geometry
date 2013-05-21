@@ -78,6 +78,7 @@ class tBSplineCurve : public tSplineCurve<Tdimension, TElement, Tdegree>
 // Public methods and typedefs
 //----------------------------------------------------------------------
 public:
+
   /*!
      * Construct a uniform B-spline using control points and a knot vector
      */
@@ -89,6 +90,18 @@ public:
    */
   template <typename TIterator>
   tBSplineCurve(TIterator begin, TIterator end);
+
+  const std::vector<double> &Knots() const
+  {
+    return this->knots;
+  }
+
+  template <typename TIterator>
+  void SetKnots(TIterator begin, TIterator end)
+  {
+    this->knots.assign(begin, end);
+    this->CalculateBezierControlPoints();
+  }
 
 //----------------------------------------------------------------------
 // Protected methods
@@ -139,6 +152,19 @@ private:
   virtual std::shared_ptr<const typename tSplineCurve::tBezierCurve> CreateBezierCurveForSegment(unsigned int i) const;
 
 };
+
+//----------------------------------------------------------------------
+// Operators for rrlib_serialization
+//----------------------------------------------------------------------
+#ifdef _LIB_RRLIB_SERIALIZATION_PRESENT_
+
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+serialization::tOutputStream &operator << (serialization::tOutputStream &stream, const tBSplineCurve<Tdimension, TElement, Tdegree> &spline);
+
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+serialization::tInputStream &operator >> (serialization::tInputStream &stream, tBSplineCurve<Tdimension, TElement, Tdegree> &spline);
+
+#endif
 
 //----------------------------------------------------------------------
 // End of namespace declaration

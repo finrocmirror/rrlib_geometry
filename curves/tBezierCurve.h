@@ -46,6 +46,10 @@
 #include "rrlib/canvas/tCanvas2D.h"
 #endif
 
+#ifdef _LIB_RRLIB_SERIALIZATION_PRESENT_
+#include "rrlib/serialization/serialization.h"
+#endif
+
 //----------------------------------------------------------------------
 // Internal includes with ""
 //----------------------------------------------------------------------
@@ -179,6 +183,19 @@ extern template class tBezierCurve<3, double, 3>;
 
 template <typename TElement, unsigned int Tdegree>
 canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2, TElement, Tdegree> &bezier_curve);
+
+#endif
+
+//----------------------------------------------------------------------
+// Operators for rrlib_serialization
+//----------------------------------------------------------------------
+#ifdef _LIB_RRLIB_SERIALIZATION_PRESENT_
+
+template < size_t Tdimension, typename TElement, unsigned int Tdegree = 3 >
+serialization::tOutputStream &operator << (serialization::tOutputStream &stream, const tBezierCurve<Tdimension, TElement, Tdegree> &curve);
+
+template < size_t Tdimension, typename TElement, unsigned int Tdegree = 3 >
+serialization::tInputStream &operator >> (serialization::tInputStream &stream, tBezierCurve<Tdimension, TElement, Tdegree> &curve);
 
 #endif
 

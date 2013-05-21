@@ -227,6 +227,39 @@ std::shared_ptr<const typename tSplineCurve<Tdimension, TElement, Tdegree>::tBez
   return std::shared_ptr<const typename tSplineCurve::tBezierCurve>(new typename tSplineCurve::tBezierCurve(segment_control_points.begin(), segment_control_points.end()));
 }
 
+//----------------------------------------------------------------------
+// Operators for rrlib_serialization
+//----------------------------------------------------------------------
+#ifdef _LIB_RRLIB_SERIALIZATION_PRESENT_
+
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+serialization::tOutputStream &operator << (serialization::tOutputStream &stream, const tBSplineCurve<Tdimension, TElement, Tdegree> &spline)
+{
+  stream << reinterpret_cast<const tSplineCurve<Tdimension, TElement, Tdegree> &>(spline);
+  stream << spline.Knots().size();
+  for (size_t i = 0; i < spline.Knots().size(); ++i)
+  {
+    stream << spline.Knots()[i];
+  }
+  return stream;
+}
+
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+serialization::tInputStream &operator >> (serialization::tInputStream &stream, tBSplineCurve<Tdimension, TElement, Tdegree> &spline)
+{
+  stream >> reinterpret_cast<tSplineCurve<Tdimension, TElement, Tdegree> &>(spline);
+  size_t number_of_knots;
+  stream >> number_of_knots;
+  double knots[number_of_knots];
+  for (size_t i = 0; i < number_of_knots; ++i)
+  {
+    stream >> knots[i];
+  }
+  spline.SetKnots(knots, knots + number_of_knots);
+  return stream;
+}
+
+#endif
 
 //----------------------------------------------------------------------
 // End of namespace declaration

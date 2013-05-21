@@ -47,6 +47,10 @@
 #include "rrlib/canvas/tCanvas3D.h"
 #endif
 
+#ifdef _LIB_RRLIB_SERIALIZATION_PRESENT_
+#include "rrlib/serialization/serialization.h"
+#endif
+
 #include "rrlib/util/variadic_templates.h"
 
 //----------------------------------------------------------------------
@@ -123,6 +127,9 @@ public:
 
   void InsertControlPoint(size_t position, const typename tShape::tPoint &point);
 
+  template <typename TIterator>
+  void SetControlPoints(TIterator begin, TIterator end);
+
   const typename tShape::tPoint operator()(tParameter t) const;
 
   std::shared_ptr<const tBezierCurve> GetBezierCurveForParameter(tParameter t) const;
@@ -179,6 +186,19 @@ private:
 
 template <typename TElement, unsigned int Tdegree>
 inline canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tSplineCurve<2, TElement, Tdegree> &spline);
+
+#endif
+
+//----------------------------------------------------------------------
+// Operators for rrlib_serialization
+//----------------------------------------------------------------------
+#ifdef _LIB_RRLIB_SERIALIZATION_PRESENT_
+
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+serialization::tOutputStream &operator << (serialization::tOutputStream &stream, const tSplineCurve<Tdimension, TElement, Tdegree> &spline);
+
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+serialization::tInputStream &operator >> (serialization::tInputStream &stream, tSplineCurve<Tdimension, TElement, Tdegree> &spline);
 
 #endif
 

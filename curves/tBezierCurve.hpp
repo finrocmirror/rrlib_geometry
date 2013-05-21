@@ -436,6 +436,35 @@ canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2,
 #endif
 
 //----------------------------------------------------------------------
+// Operators for rrlib_serialization
+//----------------------------------------------------------------------
+#ifdef _LIB_RRLIB_SERIALIZATION_PRESENT_
+
+template < size_t Tdimension, typename TElement, unsigned int Tdegree>
+serialization::tOutputStream &operator << (serialization::tOutputStream &stream, const tBezierCurve<Tdimension, TElement, Tdegree> &curve)
+{
+  for (size_t i = 0; i < curve.NumberOfControlPoints(); ++i)
+  {
+    stream << curve.ControlPoints()[i];
+  }
+  return stream;
+}
+
+template < size_t Tdimension, typename TElement, unsigned int Tdegree>
+serialization::tInputStream &operator >> (serialization::tInputStream &stream, tBezierCurve<Tdimension, TElement, Tdegree> &curve)
+{
+  for (size_t i = 0; i < curve.NumberOfControlPoints(); ++i)
+  {
+    typename tBezierCurve<Tdimension, TElement, Tdegree>::tPoint control_point;
+    stream >> control_point;
+    curve.SetControlPoint(i, control_point);
+  }
+  return stream;
+}
+
+#endif
+
+//----------------------------------------------------------------------
 // End of namespace declaration
 //----------------------------------------------------------------------
 }
