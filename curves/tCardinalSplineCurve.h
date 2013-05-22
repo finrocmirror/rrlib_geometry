@@ -79,6 +79,8 @@ class tCardinalSplineCurve : public tSplineCurve<Tdimension, TElement, 3>
 //----------------------------------------------------------------------
 public:
 
+  tCardinalSplineCurve();
+
   template <typename TIterator>
   tCardinalSplineCurve(TIterator begin, TIterator end, double tension = 0.0);
 

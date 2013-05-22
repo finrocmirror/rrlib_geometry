@@ -105,6 +105,8 @@ public:
   typedef tBezierCurve < Tdimension, TElement, Tdegree - 1 > tDerivative;
   typedef std::pair<tBezierCurve, tBezierCurve> tSubdivision;
 
+  tBezierCurve();
+
   template <typename TIterator>
   tBezierCurve(TIterator begin, TIterator end);
 

@@ -61,6 +61,14 @@ namespace geometry
 //----------------------------------------------------------------------
 // tBSplineCurve constructor
 //----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+tBSplineCurve<Tdimension, TElement, Tdegree>::tBSplineCurve() :
+  tSplineCurve()
+{
+  this->CalculateKnotVector();
+  this->CalculateBezierControlPoints();
+}
+
 template<size_t Tdimension, typename TElement, unsigned int Tdegree>
 template<typename TIterator, typename TKnotIterator>
 tBSplineCurve<Tdimension, TElement, Tdegree>::tBSplineCurve(TIterator control_points_begin, TIterator control_points_end, TKnotIterator knots_begin, TKnotIterator knots_end) :

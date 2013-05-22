@@ -66,6 +66,15 @@ namespace geometry
 // tSplineCurve constructor
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+tSplineCurve<Tdimension, TElement, Tdegree>::tSplineCurve() :
+  control_points(Tdegree + 1, tShape::tPoint::Zero())
+{
+  static_assert(Tdegree > 0, "The degree of spline curves must be greater than zero");
+  assert(control_points.size() > Tdegree && "A spline curve needs at least degree + 1 control points");
+  this->bezier_curve_cache.resize(this->NumberOfSegments());
+}
+
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 template <typename TIterator>
 tSplineCurve<Tdimension, TElement, Tdegree>::tSplineCurve(TIterator begin, TIterator end)
 {

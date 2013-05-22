@@ -66,6 +66,13 @@ namespace geometry
 // tBezierCurve constructors
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+tBezierCurve<Tdimension, TElement, Tdegree>::tBezierCurve()
+{
+  static_assert(Tdegree > 0, "The degree of Bezier curves must be greater than zero");
+  memset(this->control_points, 0, sizeof(this->control_points));
+}
+
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 template <typename TIterator>
 tBezierCurve<Tdimension, TElement, Tdegree>::tBezierCurve(TIterator begin, TIterator end)
 {

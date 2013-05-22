@@ -100,6 +100,8 @@ public:
   typedef geometry::tBezierCurve<Tdimension, TElement, Tdegree> tBezierCurve;
   typedef typename tBezierCurve::tParameter tParameter;
 
+  tSplineCurve();
+
   template <typename TIterator>
   tSplineCurve(TIterator begin, TIterator end);
 

@@ -65,6 +65,11 @@ namespace geometry
 // tCardinalSplineCurve constructor
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
+tCardinalSplineCurve<Tdimension, TElement>::tCardinalSplineCurve() :
+  tSplineCurve()
+{}
+
+template <size_t Tdimension, typename TElement>
 template <typename TIterator>
 tCardinalSplineCurve<Tdimension, TElement>::tCardinalSplineCurve(TIterator begin, TIterator end, double tension)
   : tSplineCurve(begin, end),

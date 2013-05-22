@@ -79,6 +79,8 @@ class tBSplineCurve : public tSplineCurve<Tdimension, TElement, Tdegree>
 //----------------------------------------------------------------------
 public:
 
+  tBSplineCurve();
+
   /*!
      * Construct a uniform B-spline using control points and a knot vector
      */
