@@ -113,10 +113,7 @@ public:
     return this->control_points.size();
   }
 
-  inline const unsigned int NumberOfSegments() const
-  {
-    return this->control_points.size() - Tdegree;
-  };
+  virtual const unsigned int NumberOfSegments() const;
 
   inline const std::vector<typename tShape::tPoint> &ControlPoints() const
   {

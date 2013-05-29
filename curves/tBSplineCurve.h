@@ -93,6 +93,8 @@ public:
   template <typename TIterator>
   tBSplineCurve(TIterator begin, TIterator end);
 
+  virtual const unsigned int NumberOfSegments() const;
+
   const std::vector<double> &Knots() const
   {
     return this->knots;

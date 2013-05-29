@@ -95,6 +95,15 @@ tSplineCurve<Tdimension, TElement, Tdegree>::tSplineCurve(const typename tShape:
 }
 
 //----------------------------------------------------------------------
+// tSplineCurve NumberOfSegments
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+const unsigned int tSplineCurve<Tdimension, TElement, Tdegree>::NumberOfSegments() const
+{
+  return this->control_points.size() - Tdegree;
+};
+
+//----------------------------------------------------------------------
 // tSplineCurve SetControlPoint
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>

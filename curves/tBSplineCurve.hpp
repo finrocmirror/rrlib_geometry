@@ -89,6 +89,25 @@ tBSplineCurve<Tdimension, TElement, Tdegree>::tBSplineCurve(TIterator begin, TIt
   this->CalculateBezierControlPoints();
 }
 
+//----------------------------------------------------------------------
+// tBSplineCurve NumberOfSegments
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
+const unsigned int tBSplineCurve<Tdimension, TElement, Tdegree>::NumberOfSegments() const
+{
+  unsigned int number_of_segments = 0;
+  double current_knot = this->knots[0];
+  for (size_t i = 1; i < this->knots.size(); ++i)
+  {
+    if (current_knot != this->knots[i])
+    {
+      number_of_segments++;
+      current_knot = this->knots[i];
+    }
+  }
+  return number_of_segments;
+};
+
 //template<size_t Tdimension, typename TElement, unsigned int Tdegree>
 //void tBSplineCurve<Tdimension, TElement, Tdegree>::AppendControlPoint(const typename tShape::tPoint &point)
 //{
