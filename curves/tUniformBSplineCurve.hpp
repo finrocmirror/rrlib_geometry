@@ -85,7 +85,7 @@ void tUniformBSplineCurve<Tdimension, TElement>::SetTension(double tension)
 // tUniformBSplineCurve GetSegmentForParameter
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-unsigned int tUniformBSplineCurve<Tdimension, TElement>::GetSegmentForParameter(typename tSplineCurve::tParameter t)
+unsigned int tUniformBSplineCurve<Tdimension, TElement>::GetSegmentForParameter(typename tSplineCurve::tParameter t) const
 {
   assert((0 <= t) && (t <= this->NumberOfSegments()));
   return static_cast<unsigned int>(t < this->NumberOfSegments() ? t : t - 1.0);
@@ -95,7 +95,7 @@ unsigned int tUniformBSplineCurve<Tdimension, TElement>::GetSegmentForParameter(
 // tUniformBSplineCurve GetLocalParameter
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-typename tSplineCurve<Tdimension, TElement, 3>::tParameter tUniformBSplineCurve<Tdimension, TElement>::GetLocalParameter(typename tSplineCurve::tParameter t)
+typename tSplineCurve<Tdimension, TElement, 3>::tParameter tUniformBSplineCurve<Tdimension, TElement>::GetLocalParameter(typename tSplineCurve::tParameter t) const
 {
   assert((0 <= t) && (t <= this->NumberOfSegments()));
   return t < this->NumberOfSegments() ? t - std::trunc(t) : 1.0;

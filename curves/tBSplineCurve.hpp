@@ -23,7 +23,7 @@
  *
  * \author  Patrick Fleischmann
  *
- * \date    Apr 18, 2012
+ * \date    2012-04-18
  *
  */
 //----------------------------------------------------------------------
@@ -219,7 +219,7 @@ std::vector<typename tBSplineCurve<Tdimension, TElement, Tdegree>::tShape::tPoin
 // tBSplineCurve GetSegmentForParameter
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
-unsigned int tBSplineCurve<Tdimension, TElement, Tdegree>::GetSegmentForParameter(typename tSplineCurve::tParameter t)
+unsigned int tBSplineCurve<Tdimension, TElement, Tdegree>::GetSegmentForParameter(typename tSplineCurve::tParameter t) const
 {
   assert((this->knots.front() <= t) && (t <= this->knots.back()));
   auto it = std::lower_bound(this->knots.begin(), this->knots.end(), t);
@@ -231,7 +231,7 @@ unsigned int tBSplineCurve<Tdimension, TElement, Tdegree>::GetSegmentForParamete
 // tBSplineCurve GetLocalParameter
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
-typename tSplineCurve<Tdimension, TElement, Tdegree>::tParameter tBSplineCurve<Tdimension, TElement, Tdegree>::GetLocalParameter(typename tSplineCurve::tParameter t)
+typename tSplineCurve<Tdimension, TElement, Tdegree>::tParameter tBSplineCurve<Tdimension, TElement, Tdegree>::GetLocalParameter(typename tSplineCurve::tParameter t) const
 {
   unsigned int start = this->GetSegmentForParameter(t);
   unsigned int stop = start + 1;

@@ -23,7 +23,7 @@
  *
  * \author  Patrick Fleischmann
  *
- * \date    Apr 18, 2012
+ * \date    2012-04-18
  *
  * \brief
  *
@@ -33,8 +33,8 @@
  *
  */
 //----------------------------------------------------------------------
-#ifndef TBSPLINECURVE_H_
-#define TBSPLINECURVE_H_
+#ifndef __rrlib__geometry__curves__tBSplineCurve_h__
+#define __rrlib__geometry__curves__tBSplineCurve_h__
 
 //----------------------------------------------------------------------
 // External includes (system with <>, local with "")
@@ -145,8 +145,8 @@ private:
    */
   std::vector<typename tShape::tPoint> InsertKnot(int at, const std::vector<double> &knots_before_insertion, double knot, const std::vector<typename tShape::tPoint> &control_points) const;
 
-  virtual unsigned int GetSegmentForParameter(typename tSplineCurve::tParameter t);
-  virtual typename tSplineCurve::tParameter GetLocalParameter(typename tSplineCurve::tParameter t);
+  virtual unsigned int GetSegmentForParameter(typename tSplineCurve::tParameter t) const;
+  virtual typename tSplineCurve::tParameter GetLocalParameter(typename tSplineCurve::tParameter t) const;
 
   /*!
    * Create the bezier representation of the B-spline for the given segment id

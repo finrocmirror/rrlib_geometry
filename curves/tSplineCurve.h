@@ -172,8 +172,8 @@ private:
   virtual void UpdateBoundingBox(typename tShape::tBoundingBox &bounding_box) const;
   virtual void UpdateCenterOfGravity(typename tShape::tPoint &center_of_gravity) const;
 
-  virtual unsigned int GetSegmentForParameter(tParameter t) = 0;
-  virtual tParameter GetLocalParameter(tParameter t) = 0;
+  virtual unsigned int GetSegmentForParameter(tParameter t) const = 0;
+  virtual tParameter GetLocalParameter(tParameter t) const = 0;
   virtual std::shared_ptr<const tBezierCurve> CreateBezierCurveForSegment(unsigned int i) const = 0;
 
 };

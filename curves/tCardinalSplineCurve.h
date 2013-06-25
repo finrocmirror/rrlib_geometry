@@ -100,8 +100,8 @@ private:
 
   double tension;
 
-  virtual unsigned int GetSegmentForParameter(typename tSplineCurve::tParameter t);
-  virtual typename tSplineCurve::tParameter GetLocalParameter(typename tSplineCurve::tParameter t);
+  virtual unsigned int GetSegmentForParameter(typename tSplineCurve::tParameter t) const;
+  virtual typename tSplineCurve::tParameter GetLocalParameter(typename tSplineCurve::tParameter t) const;
 
 };
 

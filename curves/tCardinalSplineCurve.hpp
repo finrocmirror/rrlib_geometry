@@ -90,7 +90,7 @@ void tCardinalSplineCurve<Tdimension, TElement>::SetTension(double tension)
 // tCardinalSplineCurve GetSegmentForParameter
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-unsigned int tCardinalSplineCurve<Tdimension, TElement>::GetSegmentForParameter(typename tSplineCurve::tParameter t)
+unsigned int tCardinalSplineCurve<Tdimension, TElement>::GetSegmentForParameter(typename tSplineCurve::tParameter t) const
 {
   assert((0 <= t) && (t <= this->NumberOfSegments()));
   return static_cast<unsigned int>(t < this->NumberOfSegments() ? t : t - 1.0);
@@ -100,7 +100,7 @@ unsigned int tCardinalSplineCurve<Tdimension, TElement>::GetSegmentForParameter(
 // tCardinalSplineCurve GetLocalParameter
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-typename tSplineCurve<Tdimension, TElement, 3>::tParameter tCardinalSplineCurve<Tdimension, TElement>::GetLocalParameter(typename tSplineCurve::tParameter t)
+typename tSplineCurve<Tdimension, TElement, 3>::tParameter tCardinalSplineCurve<Tdimension, TElement>::GetLocalParameter(typename tSplineCurve::tParameter t) const
 {
   assert((0 <= t) && (t <= this->NumberOfSegments()));
   return t < this->NumberOfSegments() ? t - std::trunc(t) : 1.0;
