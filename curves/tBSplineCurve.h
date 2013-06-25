@@ -124,6 +124,7 @@ private:
   std::vector<typename tSplineCurve::tParameter> knots;
   /*! Bezier control points used to evaluate b-spline curve which is converted to a set of bezier curves  */
   mutable std::vector<typename tShape::tPoint> bezier_control_point_cache;
+  mutable unsigned int number_of_segments;
 
   /*!
    * Calculate a uniform knot vector, this->knots will be modified

@@ -63,7 +63,8 @@ namespace geometry
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 tBSplineCurve<Tdimension, TElement, Tdegree>::tBSplineCurve() :
-  tSplineCurve()
+  tSplineCurve(),
+  number_of_segments(-1)
 {
   this->CalculateKnotVector();
 }
@@ -71,7 +72,8 @@ tBSplineCurve<Tdimension, TElement, Tdegree>::tBSplineCurve() :
 template<size_t Tdimension, typename TElement, unsigned int Tdegree>
 template<typename TIterator, typename TKnotIterator>
 tBSplineCurve<Tdimension, TElement, Tdegree>::tBSplineCurve(TIterator control_points_begin, TIterator control_points_end, TKnotIterator knots_begin, TKnotIterator knots_end) :
-  tSplineCurve(control_points_begin, control_points_end)
+  tSplineCurve(control_points_begin, control_points_end),
+  number_of_segments(-1)
 {
   // copy knots
   std::copy(knots_begin, knots_end, std::back_inserter(this->knots));
@@ -81,7 +83,8 @@ tBSplineCurve<Tdimension, TElement, Tdegree>::tBSplineCurve(TIterator control_po
 template<size_t Tdimension, typename TElement, unsigned int Tdegree>
 template<typename TIterator>
 tBSplineCurve<Tdimension, TElement, Tdegree>::tBSplineCurve(TIterator begin, TIterator end) :
-  tSplineCurve(begin, end)
+  tSplineCurve(begin, end),
+  number_of_segments(-1)
 {
   this->CalculateKnotVector();
 }
@@ -92,17 +95,18 @@ tBSplineCurve<Tdimension, TElement, Tdegree>::tBSplineCurve(TIterator begin, TIt
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 const unsigned int tBSplineCurve<Tdimension, TElement, Tdegree>::NumberOfSegments() const
 {
-  unsigned int number_of_segments = 0;
-  typename tSplineCurve::tParameter current_knot = this->knots[0];
-  for (size_t i = 1; i < this->knots.size(); ++i)
+  if (this->number_of_segments == static_cast<unsigned int>(-1))
   {
-    if (current_knot != this->knots[i])
+    this->number_of_segments = 0;
+    for (size_t i = 0; i < this->knots.size() - 1; ++i)
     {
-      number_of_segments++;
-      current_knot = this->knots[i];
+      if (this->knots[i] != this->knots[i + 1])
+      {
+        this->number_of_segments++;
+      }
     }
   }
-  return number_of_segments;
+  return this->number_of_segments;
 };
 
 //----------------------------------------------------------------------
@@ -114,6 +118,7 @@ void tBSplineCurve<Tdimension, TElement, Tdegree>::SetChanged()
   tSplineCurve::SetChanged();
   this->CalculateKnotVector();
   this->bezier_control_point_cache.clear();
+  this->number_of_segments = -1;
 }
 
 template<size_t Tdimension, typename TElement, unsigned int Tdegree>
@@ -210,9 +215,21 @@ template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 unsigned int tBSplineCurve<Tdimension, TElement, Tdegree>::GetSegmentForParameter(typename tSplineCurve::tParameter t) const
 {
   assert((this->knots.front() <= t) && (t <= this->knots.back()));
-  auto it = std::lower_bound(this->knots.begin(), this->knots.end(), t);
-
-  return static_cast<unsigned int>(t == this->knots.front() ? 0 : std::distance(this->knots.begin(), it) - 1);
+  assert(this->NumberOfSegments() > 0);
+  unsigned int segment = 0;
+  for (size_t i = 0; i < this->knots.size() - 1; ++i)
+  {
+    if (this->knots[i] != this->knots[i + 1])
+    {
+      if (this->knots[i + 1] > t)
+      {
+        return segment;
+      }
+      segment++;
+    }
+  }
+  assert(t == this->knots.back());
+  return this->NumberOfSegments() - 1;
 }
 
 //----------------------------------------------------------------------
@@ -221,14 +238,22 @@ unsigned int tBSplineCurve<Tdimension, TElement, Tdegree>::GetSegmentForParamete
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 typename tSplineCurve<Tdimension, TElement, Tdegree>::tParameter tBSplineCurve<Tdimension, TElement, Tdegree>::GetLocalParameter(typename tSplineCurve::tParameter t) const
 {
-  unsigned int start = this->GetSegmentForParameter(t);
-  unsigned int stop = start + 1;
-  while (this->knots[start] == this->knots[stop])
+  assert((this->knots.front() <= t) && (t <= this->knots.back()));
+  assert(this->NumberOfSegments() > 0);
+  unsigned int segment = 0;
+  for (size_t i = 0; i < this->knots.size() - 1; ++i)
   {
-    stop++;
-    assert(stop < this->knots.size());
+    if (this->knots[i] != this->knots[i + 1])
+    {
+      if (this->knots[i + 1] > t)
+      {
+        return (t - this->knots[i]) / (this->knots[i + 1] - this->knots[i]);
+      }
+      segment++;
+    }
   }
-  return (t - this->knots[start]) / (this->knots[stop] - this->knots[start]);
+  assert(t == this->knots.back());
+  return 1;
 }
 
 //----------------------------------------------------------------------
