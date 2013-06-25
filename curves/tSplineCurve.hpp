@@ -71,7 +71,6 @@ tSplineCurve<Tdimension, TElement, Tdegree>::tSplineCurve() :
 {
   static_assert(Tdegree > 0, "The degree of spline curves must be greater than zero");
   assert(control_points.size() > Tdegree && "A spline curve needs at least degree + 1 control points");
-  this->bezier_curve_cache.resize(this->NumberOfSegments());
 }
 
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
@@ -81,7 +80,6 @@ tSplineCurve<Tdimension, TElement, Tdegree>::tSplineCurve(TIterator begin, TIter
   static_assert(Tdegree > 0, "The degree of spline curves must be greater than zero");
   std::copy(begin, end, std::back_inserter(this->control_points));
   assert(control_points.size() > Tdegree && "A spline curve needs at least degree + 1 control points");
-  this->bezier_curve_cache.resize(this->NumberOfSegments());
 }
 
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
@@ -91,7 +89,6 @@ tSplineCurve<Tdimension, TElement, Tdegree>::tSplineCurve(const typename tShape:
   static_assert(Tdegree > 0, "The degree of spline curves must be greater than zero");
   static_assert(sizeof...(rest) + 2 > Tdegree, "A spline curve needs at least degree + 1 control points");
   util::ProcessVariadicValues<typename tShape::tPoint>([this](const typename tShape::tPoint & x) mutable { this->control_points.push_back(x); }, p1, p2, rest...);
-  this->bezier_curve_cache.resize(this->NumberOfSegments());
 }
 
 //----------------------------------------------------------------------
@@ -122,7 +119,6 @@ void tSplineCurve<Tdimension, TElement, Tdegree>::AppendControlPoint(const typen
 {
   this->control_points.push_back(point);
   this->SetChanged();
-  this->bezier_curve_cache.emplace_back();
 };
 
 //----------------------------------------------------------------------
@@ -134,7 +130,6 @@ void tSplineCurve<Tdimension, TElement, Tdegree>::InsertControlPoint(size_t posi
   assert(position < this->control_points.size());
   this->control_points.insert(this->control_points.begin() + position, point);
   this->SetChanged();
-  this->bezier_curve_cache.emplace_back();
 };
 
 //----------------------------------------------------------------------
@@ -183,7 +178,7 @@ template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 std::shared_ptr<const typename tSplineCurve<Tdimension, TElement, Tdegree>::tBezierCurve> tSplineCurve<Tdimension, TElement, Tdegree>::GetBezierCurveForSegment(unsigned int i) const
 {
   assert(i < this->NumberOfSegments());
-  assert(this->bezier_curve_cache.size() == this->NumberOfSegments());
+  this->bezier_curve_cache.resize(this->NumberOfSegments());
   if (!this->bezier_curve_cache[i])
   {
     this->bezier_curve_cache[i] = this->CreateBezierCurveForSegment(i);

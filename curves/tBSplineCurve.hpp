@@ -66,7 +66,6 @@ tBSplineCurve<Tdimension, TElement, Tdegree>::tBSplineCurve() :
   tSplineCurve()
 {
   this->CalculateKnotVector();
-  this->CalculateBezierControlPoints();
 }
 
 template<size_t Tdimension, typename TElement, unsigned int Tdegree>
@@ -77,7 +76,6 @@ tBSplineCurve<Tdimension, TElement, Tdegree>::tBSplineCurve(TIterator control_po
   // copy knots
   std::copy(knots_begin, knots_end, std::back_inserter(this->knots));
   assert(this->knots.size() == this->ControlPoints().size() + Tdegree + 1);
-  this->CalculateBezierControlPoints();
 }
 
 template<size_t Tdimension, typename TElement, unsigned int Tdegree>
@@ -86,7 +84,6 @@ tBSplineCurve<Tdimension, TElement, Tdegree>::tBSplineCurve(TIterator begin, TIt
   tSplineCurve(begin, end)
 {
   this->CalculateKnotVector();
-  this->CalculateBezierControlPoints();
 }
 
 //----------------------------------------------------------------------
@@ -96,7 +93,7 @@ template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 const unsigned int tBSplineCurve<Tdimension, TElement, Tdegree>::NumberOfSegments() const
 {
   unsigned int number_of_segments = 0;
-  double current_knot = this->knots[0];
+  typename tSplineCurve::tParameter current_knot = this->knots[0];
   for (size_t i = 1; i < this->knots.size(); ++i)
   {
     if (current_knot != this->knots[i])
@@ -108,14 +105,6 @@ const unsigned int tBSplineCurve<Tdimension, TElement, Tdegree>::NumberOfSegment
   return number_of_segments;
 };
 
-//template<size_t Tdimension, typename TElement, unsigned int Tdegree>
-//void tBSplineCurve<Tdimension, TElement, Tdegree>::AppendControlPoint(const typename tShape::tPoint &point)
-//{
-//  tSplineCurve::AppendControlPoint(point);
-//  this->CalculateKnotVector();
-//  this->CalculateBezierControlPoints();
-//}
-//
 //----------------------------------------------------------------------
 // tBSplineCurve SetChanged
 //----------------------------------------------------------------------
@@ -124,7 +113,7 @@ void tBSplineCurve<Tdimension, TElement, Tdegree>::SetChanged()
 {
   tSplineCurve::SetChanged();
   this->CalculateKnotVector();
-  this->CalculateBezierControlPoints();
+  this->bezier_control_point_cache.clear();
 }
 
 template<size_t Tdimension, typename TElement, unsigned int Tdegree>
@@ -155,18 +144,18 @@ void tBSplineCurve<Tdimension, TElement, Tdegree>::CalculateKnotVector()
 }
 
 template<size_t Tdimension, typename TElement, unsigned int Tdegree>
-void tBSplineCurve<Tdimension, TElement, Tdegree>::CalculateBezierControlPoints()
+void tBSplineCurve<Tdimension, TElement, Tdegree>::CalculateBezierControlPoints() const
 {
-  this->bezier_control_points.clear();
-  std::vector<double> new_knots;
+  this->bezier_control_point_cache.clear();
+  std::vector<typename tSplineCurve::tParameter> new_knots;
   new_knots.reserve(this->knots.size() * Tdegree);
   std::copy(this->knots.begin(), this->knots.end(), std::back_inserter(new_knots));
-  std::copy(this->ControlPoints().begin(), this->ControlPoints().end(), std::back_inserter(this->bezier_control_points));
+  std::copy(this->ControlPoints().begin(), this->ControlPoints().end(), std::back_inserter(this->bezier_control_point_cache));
 
-  double knot = new_knots[0];
+  typename tSplineCurve::tParameter knot = new_knots[0];
   unsigned int multiplicity = 1;
 
-  for (std::vector<double>::iterator it = (++new_knots.begin()); it < new_knots.end(); ++it)
+  for (auto it = (++new_knots.begin()); it < new_knots.end(); ++it)
   {
     if (knot == *it)
     {
@@ -178,7 +167,7 @@ void tBSplineCurve<Tdimension, TElement, Tdegree>::CalculateBezierControlPoints(
       {
         for (unsigned int s = multiplicity; s < Tdegree; s++)
         {
-          this->bezier_control_points = InsertKnot((it - new_knots.begin()) - multiplicity, new_knots, knot, this->bezier_control_points);
+          this->bezier_control_point_cache = InsertKnot((it - new_knots.begin()) - multiplicity, new_knots, knot, this->bezier_control_point_cache);
           new_knots.insert(it, knot);
         }
         it += Tdegree - multiplicity;
@@ -193,8 +182,7 @@ void tBSplineCurve<Tdimension, TElement, Tdegree>::CalculateBezierControlPoints(
 }
 
 template<size_t Tdimension, typename TElement, unsigned int Tdegree>
-std::vector<typename tBSplineCurve<Tdimension, TElement, Tdegree>::tShape::tPoint> tBSplineCurve<Tdimension, TElement, Tdegree>::InsertKnot(int at, const std::vector<double> &knots_before_insertion, double knot, const std::vector <
-    typename tShape::tPoint > &control_points) const
+std::vector<typename tBSplineCurve<Tdimension, TElement, Tdegree>::tShape::tPoint> tBSplineCurve<Tdimension, TElement, Tdegree>::InsertKnot(int at, const std::vector<typename tSplineCurve::tParameter> &knots_before_insertion, typename tSplineCurve::tParameter knot, const std::vector<typename tShape::tPoint> &control_points)
 {
   std::vector<typename tShape::tPoint> new_control_points;
   new_control_points.reserve(control_points.size() + 1);
@@ -205,7 +193,7 @@ std::vector<typename tBSplineCurve<Tdimension, TElement, Tdegree>::tShape::tPoin
   // recalculate control points affected by knot insertion
   for (int i = at - Tdegree + 1; i <= at; i++)
   {
-    double a = (knot - knots_before_insertion[i]) / (knots_before_insertion[i + Tdegree] - knots_before_insertion[i]);
+    typename tSplineCurve::tParameter a = (knot - knots_before_insertion[i]) / (knots_before_insertion[i + Tdegree] - knots_before_insertion[i]);
     new_control_points.push_back((1 - a) * control_points[i - 1] + a * control_points[i]);
   }
 
@@ -249,8 +237,12 @@ typename tSplineCurve<Tdimension, TElement, Tdegree>::tParameter tBSplineCurve<T
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 std::shared_ptr<const typename tSplineCurve<Tdimension, TElement, Tdegree>::tBezierCurve> tBSplineCurve<Tdimension, TElement, Tdegree>::CreateBezierCurveForSegment(unsigned int i) const
 {
+  if (this->bezier_control_point_cache.empty())
+  {
+    this->CalculateBezierControlPoints();
+  }
   std::vector<typename tShape::tPoint> segment_control_points;
-  std::copy(this->bezier_control_points.begin() + i * Tdegree, this->bezier_control_points.begin() + i * Tdegree + Tdegree + 1, std::back_inserter(segment_control_points));
+  std::copy(this->bezier_control_point_cache.begin() + i * Tdegree, this->bezier_control_point_cache.begin() + i * Tdegree + Tdegree + 1, std::back_inserter(segment_control_points));
   return std::shared_ptr<const typename tSplineCurve::tBezierCurve>(new typename tSplineCurve::tBezierCurve(segment_control_points.begin(), segment_control_points.end()));
 }
 
@@ -277,7 +269,7 @@ serialization::tInputStream &operator >> (serialization::tInputStream &stream, t
   stream >> reinterpret_cast<tSplineCurve<Tdimension, TElement, Tdegree> &>(spline);
   size_t number_of_knots;
   stream >> number_of_knots;
-  double knots[number_of_knots];
+  typename tSplineCurve<Tdimension, TElement, Tdegree>::tParameter knots[number_of_knots];
   for (size_t i = 0; i < number_of_knots; ++i)
   {
     stream >> knots[i];

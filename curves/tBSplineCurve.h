@@ -95,7 +95,7 @@ public:
 
   virtual const unsigned int NumberOfSegments() const;
 
-  const std::vector<double> &Knots() const
+  const std::vector<typename tSplineCurve::tParameter> &Knots() const
   {
     return this->knots;
   }
@@ -121,9 +121,9 @@ protected:
 //----------------------------------------------------------------------
 private:
   /*! B-spline knot vector (#knots = #control points + degree + 1) */
-  std::vector<double> knots;
+  std::vector<typename tSplineCurve::tParameter> knots;
   /*! Bezier control points used to evaluate b-spline curve which is converted to a set of bezier curves  */
-  std::vector<typename tShape::tPoint> bezier_control_points;
+  mutable std::vector<typename tShape::tPoint> bezier_control_point_cache;
 
   /*!
    * Calculate a uniform knot vector, this->knots will be modified
@@ -133,7 +133,7 @@ private:
   /*!
    * Calculate all Bezier control points by knot insertion, this->bezier_control_points will be modified
    */
-  void CalculateBezierControlPoints();
+  void CalculateBezierControlPoints() const;
 
   /*!
    * Recalculate control points affected by a knot insertion
@@ -143,7 +143,7 @@ private:
    * @param control_points Control points before insertion
    * @return Control points after knot insertion
    */
-  std::vector<typename tShape::tPoint> InsertKnot(int at, const std::vector<double> &knots_before_insertion, double knot, const std::vector<typename tShape::tPoint> &control_points) const;
+  static std::vector<typename tShape::tPoint> InsertKnot(int at, const std::vector<typename tSplineCurve::tParameter> &knots_before_insertion, typename tSplineCurve::tParameter knot, const std::vector<typename tShape::tPoint> &control_points);
 
   virtual unsigned int GetSegmentForParameter(typename tSplineCurve::tParameter t) const;
   virtual typename tSplineCurve::tParameter GetLocalParameter(typename tSplineCurve::tParameter t) const;
