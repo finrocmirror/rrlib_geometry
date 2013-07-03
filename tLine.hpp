@@ -280,7 +280,7 @@ void tLine<Tdimension, TElement>::UpdateCenterOfGravity(typename tShape::tPoint 
 template <typename TElement>
 canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tLine<2, TElement> &line)
 {
-  canvas.DrawLine(line.Support(), line.Support() + line.Direction());
+  canvas.DrawLine(line.Support(), line.Direction());
 
   return canvas;
 }
