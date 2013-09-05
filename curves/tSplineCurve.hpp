@@ -88,7 +88,11 @@ tSplineCurve<Tdimension, TElement, Tdegree>::tSplineCurve(const typename tShape:
 {
   static_assert(Tdegree > 0, "The degree of spline curves must be greater than zero");
   static_assert(sizeof...(rest) + 2 > Tdegree, "A spline curve needs at least degree + 1 control points");
-  util::ProcessVariadicValues([this](const typename tShape::tPoint & x) mutable { this->control_points.push_back(x); }, p1, p2, rest...);
+  util::ProcessVariadicValues([this](const typename tShape::tPoint & x)
+  {
+    this->control_points.push_back(x);
+  },
+  p1, p2, rest...);
 }
 
 //----------------------------------------------------------------------
