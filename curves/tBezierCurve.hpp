@@ -92,7 +92,7 @@ tBezierCurve<Tdimension, TElement, Tdegree>::tBezierCurve(const typename tShape:
   static_assert(Tdegree > 0, "The degree of Bezier curves must be greater than zero");
   static_assert(sizeof...(rest) + 1 == Tdegree, "A Bezier curve must have degree + 1 control points");
   size_t index = 0;
-  util::ProcessVariadicValues<typename tShape::tPoint>([this, index](const typename tShape::tPoint & x) mutable { this->control_points[index++] = x; }, p1, p2, rest...);
+  util::ProcessVariadicValues([this, index](const typename tShape::tPoint & x) mutable { this->control_points[index++] = x; }, p1, p2, rest...);
 }
 
 //----------------------------------------------------------------------
