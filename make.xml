@@ -2,7 +2,7 @@
 <!DOCTYPE targets PUBLIC "-//RRLIB//DTD make 1.0" "http://rrlib.org/xml/1.0/make.dtd">
 <targets>
 
-  <rrlib name="geometry_basic_shapes">
+  <rrlib name="basic_shapes">
     <sources>
       functions.h
       tBoundingBox.h
@@ -14,13 +14,13 @@
     </sources>
   </rrlib>
 
-  <rrlib name="geometry_curves">
+  <rrlib name="curves">
     <sources>
       curves/*
     </sources>
   </rrlib>
 
-  <rrlib name="geometry_space_partitioning">
+  <rrlib name="space_partitioning">
     <sources>
       space_partitioning/*
     </sources>
