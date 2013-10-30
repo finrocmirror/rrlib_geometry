@@ -74,7 +74,7 @@ namespace geometry
 /*! A more detailed description of tLineSegment, which
     Tobias Foehst hasn't done yet !!
 */
-template < size_t Tdimension, typename TElement = double >
+template <size_t Tdimension, typename TElement = double>
 class tLineSegment : public tLine<Tdimension, TElement>
 {
 

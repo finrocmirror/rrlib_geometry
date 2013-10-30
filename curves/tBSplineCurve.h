@@ -68,7 +68,7 @@ namespace geometry
 //----------------------------------------------------------------------
 // Class declaration
 //----------------------------------------------------------------------
-template < size_t Tdimension, typename TElement, unsigned int Tdegree = 3 >
+template <size_t Tdimension, typename TElement, unsigned int Tdegree = 3>
 class tBSplineCurve : public tSplineCurve<Tdimension, TElement, Tdegree>
 {
   typedef geometry::tSplineCurve<Tdimension, TElement, Tdegree> tSplineCurve;

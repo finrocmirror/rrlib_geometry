@@ -81,7 +81,7 @@ namespace geometry
 /*! A more detailed description of tLine, which
     Tobias Foehst hasn't done yet !!
 */
-template < size_t Tdimension, typename TElement, unsigned int Tdegree = 3 >
+template <size_t Tdimension, typename TElement, unsigned int Tdegree = 3>
 class tSplineCurve : public tShape<Tdimension, TElement>
 {
 

@@ -71,7 +71,7 @@ namespace geometry
 /*! A more detailed description of tPoint, which
     Tobias Foehst hasn't done yet !!
 */
-template < size_t Tdimension, typename TElement = double >
+template <size_t Tdimension, typename TElement = double>
 class tPoint : public math::tVector<Tdimension, TElement, math::vector::Cartesian>
 {
   typedef math::tVector<Tdimension, TElement, math::vector::Cartesian> tVector;

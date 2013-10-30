@@ -447,7 +447,7 @@ canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2,
 //----------------------------------------------------------------------
 #ifdef _LIB_RRLIB_SERIALIZATION_PRESENT_
 
-template < size_t Tdimension, typename TElement, unsigned int Tdegree>
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 serialization::tOutputStream &operator << (serialization::tOutputStream &stream, const tBezierCurve<Tdimension, TElement, Tdegree> &curve)
 {
   for (size_t i = 0; i < curve.NumberOfControlPoints(); ++i)
@@ -457,7 +457,7 @@ serialization::tOutputStream &operator << (serialization::tOutputStream &stream,
   return stream;
 }
 
-template < size_t Tdimension, typename TElement, unsigned int Tdegree>
+template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 serialization::tInputStream &operator >> (serialization::tInputStream &stream, tBezierCurve<Tdimension, TElement, Tdegree> &curve)
 {
   for (size_t i = 0; i < curve.NumberOfControlPoints(); ++i)

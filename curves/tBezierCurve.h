@@ -193,10 +193,10 @@ canvas::tCanvas2D &operator << (canvas::tCanvas2D &canvas, const tBezierCurve<2,
 //----------------------------------------------------------------------
 #ifdef _LIB_RRLIB_SERIALIZATION_PRESENT_
 
-template < size_t Tdimension, typename TElement, unsigned int Tdegree = 3 >
+template <size_t Tdimension, typename TElement, unsigned int Tdegree = 3>
 serialization::tOutputStream &operator << (serialization::tOutputStream &stream, const tBezierCurve<Tdimension, TElement, Tdegree> &curve);
 
-template < size_t Tdimension, typename TElement, unsigned int Tdegree = 3 >
+template <size_t Tdimension, typename TElement, unsigned int Tdegree = 3>
 serialization::tInputStream &operator >> (serialization::tInputStream &stream, tBezierCurve<Tdimension, TElement, Tdegree> &curve);
 
 #endif

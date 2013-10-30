@@ -68,7 +68,7 @@ namespace geometry
 /*! A more detailed description of tPlane, which
     Tobias Foehst hasn't done yet !!
 */
-template < size_t Tdimension, typename TElement = double >
+template <size_t Tdimension, typename TElement = double>
 class tPlane : public tShape<3, TElement>
 {
 

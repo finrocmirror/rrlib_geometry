@@ -305,7 +305,7 @@ tSplineCurve<Tdimension, TElement, Tdegree> &tSplineCurve<Tdimension, TElement, 
 {
   for (typename std::vector<typename tShape::tPoint>::iterator it = this->control_points.begin(); it != this->control_points.end(); ++it)
   {
-    *it = rotation * *it;
+    *it = rotation **it;
   }
   this->SetChanged();
   return *this;
