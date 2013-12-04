@@ -67,9 +67,31 @@ namespace geometry
 template <size_t Tdimension, typename TElement>
 tShape<Tdimension, TElement>::tShape()
   : changed(false),
-    bounding_box(NULL),
-    center_of_gravity(NULL)
+    bounding_box(nullptr),
+    center_of_gravity(nullptr)
 {}
+
+//----------------------------------------------------------------------
+// tShape copy constructor
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement>
+tShape<Tdimension, TElement>::tShape(const tShape &other)
+  : changed(false),
+    bounding_box(nullptr),
+    center_of_gravity(nullptr)
+{}
+
+//----------------------------------------------------------------------
+// tShape assignment operator
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement>
+tShape<Tdimension, TElement> &tShape<Tdimension, TElement>::operator= (const tShape &other)
+{
+  this->changed = false;
+  this->bounding_box = nullptr;
+  this->center_of_gravity = nullptr;
+  return *this;
+}
 
 //----------------------------------------------------------------------
 // tShape destructor
@@ -133,9 +155,9 @@ void tShape<Tdimension, TElement>::ResetMetaInformation() const
 {
   this->changed = false;
   delete this->bounding_box;
-  this->bounding_box = NULL;
+  this->bounding_box = nullptr;
   delete this->center_of_gravity;
-  this->center_of_gravity = NULL;
+  this->center_of_gravity = nullptr;
 }
 
 

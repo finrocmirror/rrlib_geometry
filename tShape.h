@@ -90,6 +90,10 @@ public:
 
   tShape();
 
+  tShape(const tShape &other);
+
+  tShape &operator= (const tShape &other);
+
   virtual ~tShape() = 0;
 
   const tBoundingBox &BoundingBox() const;
