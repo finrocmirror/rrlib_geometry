@@ -156,7 +156,8 @@ void GenerateRandomClusteredPoints(std::vector<tPoint> &points,
     tElement radius;
     std::normal_distribution<tElement> distribution_x;
     std::normal_distribution<tElement> distribution_y;
-  } clusters[number_of_clusters];
+  };
+  std::vector<tCluster> clusters(number_of_clusters);
 
   auto random_cluster_center_component = std::bind(std::uniform_real_distribution<tElement>(-0.5 * cWINDOW_SIZE, 0.5 * cWINDOW_SIZE), rng_engine);
   auto random_cluster_radius = std::bind(std::uniform_real_distribution<tElement>(min_cluster_radius, max_cluster_radius), rng_engine);
