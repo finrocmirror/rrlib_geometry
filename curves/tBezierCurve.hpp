@@ -130,10 +130,11 @@ const TElement tBezierCurve<Tdimension, TElement, Tdegree>::GetTwist() const
 template <size_t Tdimension, typename TElement, unsigned int Tdegree>
 const typename tBezierCurve<Tdimension, TElement, Tdegree>::tSubdivision tBezierCurve<Tdimension, TElement, Tdegree>::GetSubdivision() const
 {
-  typename tShape::tPoint left_half[this->NumberOfControlPoints()];
-  typename tShape::tPoint right_half[this->NumberOfControlPoints()];
-  typename tShape::tPoint temp_points[this->NumberOfControlPoints()];
-  std::memcpy(temp_points, this->control_points, this->NumberOfControlPoints() * sizeof(typename tShape::tPoint));
+  const size_t cNUMBER_OF_CONTROL_POINTS = Tdegree + 1;
+  typename tShape::tPoint left_half[cNUMBER_OF_CONTROL_POINTS];
+  typename tShape::tPoint right_half[cNUMBER_OF_CONTROL_POINTS];
+  typename tShape::tPoint temp_points[cNUMBER_OF_CONTROL_POINTS];
+  std::memcpy(temp_points, this->control_points, cNUMBER_OF_CONTROL_POINTS * sizeof(typename tShape::tPoint));
 
   left_half[0] = temp_points[0];
   right_half[Tdegree] = temp_points[Tdegree];
@@ -150,7 +151,7 @@ const typename tBezierCurve<Tdimension, TElement, Tdegree>::tSubdivision tBezier
     right_half[Tdegree - k] = temp_points[Tdegree - k];
   }
 
-  return std::make_pair(tBezierCurve(left_half, left_half + this->NumberOfControlPoints()), tBezierCurve(right_half, right_half + this->NumberOfControlPoints()));
+  return std::make_pair(tBezierCurve(left_half, left_half + cNUMBER_OF_CONTROL_POINTS), tBezierCurve(right_half, right_half + cNUMBER_OF_CONTROL_POINTS));
 }
 
 //----------------------------------------------------------------------
@@ -161,8 +162,9 @@ const typename tShape<Tdimension, TElement>::tPoint tBezierCurve<Tdimension, TEl
 {
   assert((0.0 <= t) && (t <= 1.0));
 
-  typename tShape::tPoint temp_points[this->NumberOfControlPoints()];
-  std::memcpy(temp_points, this->control_points, (this->NumberOfControlPoints()) * sizeof(typename tShape::tPoint));
+  const size_t cNUMBER_OF_CONTROL_POINTS = Tdegree + 1;
+  typename tShape::tPoint temp_points[cNUMBER_OF_CONTROL_POINTS];
+  std::memcpy(temp_points, this->control_points, cNUMBER_OF_CONTROL_POINTS * sizeof(typename tShape::tPoint));
 
   size_t k = 0;
   while (k < Tdegree)
