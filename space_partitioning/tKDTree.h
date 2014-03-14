@@ -146,8 +146,6 @@ public:
 
   typedef geometry::tPoint<Tdimension, TElement> tPoint;
 
-  typedef typename tPoint::tMetric tMetric;
-
   /*!
    * \brief An inner class of the tKDTree template for the nodes of the tree
    *
@@ -181,8 +179,8 @@ public:
      * \param points_end     An indirect iterator to the end of the data to manage
      * \param metric         A functor that computes an appropriate metric
      */
-    template <typename TIterator>
-    tNode(TIterator points_begin, TIterator points_end, tMetric metric);
+    template <typename TIterator, typename Metric>
+    tNode(TIterator points_begin, TIterator points_end, Metric metric);
 
     /*!
      * brief The dtor of tKDTreeNode
@@ -260,7 +258,8 @@ public:
     size_t number_of_points;
     tPoint center_of_mass;
 
-    size_t SelectSplitAxis(tMetric metric) const;
+    template <typename Metric>
+    size_t SelectSplitAxis(Metric metric) const;
   };
 
   /*!
@@ -282,8 +281,8 @@ public:
    * The kd-tree is a static structure and has to be rebuild after changes
    * in the underlying data.
    */
-  template <typename TIterator>
-  tKDTree(TIterator points_begin, TIterator points_end, tMetric metric = tPoint::cEUCLIDEAN_DISTANCE);
+  template <typename TIterator, typename Metric = decltype(tPoint::EuclideanDistance)>
+  tKDTree(TIterator points_begin, TIterator points_end, Metric metric = tPoint::EuclideanDistance);
 
   /*!
    * \brief The dtor of tKDTree
