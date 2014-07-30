@@ -227,7 +227,7 @@ int main(int argc, char **argv)
       double radius = 1.0 / curvature;
 
       tBezierCurve::tDerivative first(bezier_curve.GetDerivative());
-      tPoint m(p + (first(t).Normalized().Rotated(-M_PI_2) * radius));
+      tPoint m(p + (first(t).Normalized().Rotated(-rrlib::math::cPI_2) * radius));
 
       window.SetColor(1);
       window.DrawCircleNormalized(m.X(), m.Y(), radius, false);
@@ -264,7 +264,7 @@ int main(int argc, char **argv)
 
   tBezierCurve bezier_curve2(tPoint(0.2, 0.1), tPoint(0.5, 0.3), tPoint(0.6, 0.7), tPoint(0.4, 0.9));
 
-  rrlib::math::tAngleDeg angle = -40;
+  rrlib::math::tAngleDeg angle(-40);
   tPoint position = bezier_curve2.CenterOfGravity();
   bezier_curve2.Translate(-position);
   bezier_curve2.Rotate(rrlib::math::Get2DRotationMatrix<double>(angle));
