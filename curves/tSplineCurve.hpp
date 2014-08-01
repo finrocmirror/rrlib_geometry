@@ -425,12 +425,12 @@ serialization::tInputStream &operator >> (serialization::tInputStream &stream, t
 {
   size_t number_of_control_points;
   stream >> number_of_control_points;
-  tPoint<Tdimension, TElement> control_points[number_of_control_points];
+  std::vector<tPoint<Tdimension, TElement>> control_points(number_of_control_points);
   for (size_t i = 0; i < number_of_control_points; ++i)
   {
     stream >> control_points[i];
   }
-  spline.SetControlPoints(control_points, control_points + number_of_control_points);
+  spline.SetControlPoints(control_points.begin(), control_points.end());
   return stream;
 }
 
