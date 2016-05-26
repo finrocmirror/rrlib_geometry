@@ -133,8 +133,18 @@ namespace
 {
 
 template <size_t Tdimension, typename TElement>
-bool IntersectLineWithLine(typename tLine<Tdimension, TElement>::tPoint &intersection_point, const tLine<Tdimension, TElement> &left, const tLine<Tdimension, TElement> &right)
+tIntersectionType IntersectLineWithLine(typename tLine<Tdimension, TElement>::tPoint &intersection_point, const tLine<Tdimension, TElement> &left, const tLine<Tdimension, TElement> &right)
 {
+  if (left.Direction() == right.Direction() || left.Direction() == -right.Direction())
+  {
+    if (left.GetClosestPoint(right.Support()) == right.Support())
+    {
+      intersection_point = right.Support();
+      return tIntersectionType::INFINITE;
+    }
+    return tIntersectionType::NONE;
+  }
+
   math::tMatrix<Tdimension, 2, TElement> matrix;
   for (size_t i = 0; i < Tdimension; ++i)
   {
@@ -146,37 +156,37 @@ bool IntersectLineWithLine(typename tLine<Tdimension, TElement>::tPoint &interse
   {
     TElement t = math::tLUDecomposition<2, TElement>(matrix).Solve(right.Support() - left.Support())[0];
     intersection_point = left.Support() + t * left.Direction();
-    return true;
+    return tIntersectionType::SINGLE;
   }
   catch (const std::logic_error &)
   {
-    return false;
+    return tIntersectionType::NONE;
   }
 }
 
 template <size_t Tdimension, typename TElement>
-bool IntersectLineWithLineSegment(typename tLine<Tdimension, TElement>::tPoint &intersection_point, const tLine<Tdimension, TElement> &left, const geometry::tLineSegment<Tdimension, TElement> &right)
+tIntersectionType IntersectLineWithLineSegment(typename tLine<Tdimension, TElement>::tPoint &intersection_point, const tLine<Tdimension, TElement> &left, const geometry::tLineSegment<Tdimension, TElement> &right)
 {
   if (!IntersectLineWithLine(intersection_point, left, right))
   {
-    return false;
+    return tIntersectionType::NONE;
   }
-  return math::IsEqual(right.GetDistanceToPoint(intersection_point), 0);
+  return math::IsEqual(right.GetDistanceToPoint(intersection_point), 0) ? tIntersectionType::SINGLE : tIntersectionType::NONE;
 }
 
 template <size_t Tdimension, typename TElement>
-bool IntersectLineSegmentWithLineSegment(typename tLine<Tdimension, TElement>::tPoint &intersection_point, const tLineSegment<Tdimension, TElement> &left, const tLineSegment<Tdimension, TElement> &right)
+tIntersectionType IntersectLineSegmentWithLineSegment(typename tLine<Tdimension, TElement>::tPoint &intersection_point, const tLineSegment<Tdimension, TElement> &left, const tLineSegment<Tdimension, TElement> &right)
 {
   if (!left.BoundingBox().Intersects(right.BoundingBox()))
   {
-    return false;
+    return tIntersectionType::NONE;
   }
 
   if (!IntersectLineWithLineSegment(intersection_point, left, right))
   {
-    return false;
+    return tIntersectionType::NONE;
   }
-  return math::IsEqual(left.GetDistanceToPoint(intersection_point), 0);
+  return math::IsEqual(left.GetDistanceToPoint(intersection_point), 0) ? tIntersectionType::SINGLE : tIntersectionType::NONE;
 }
 
 }
@@ -185,7 +195,7 @@ bool IntersectLineSegmentWithLineSegment(typename tLine<Tdimension, TElement>::t
 // tLine GetIntersection
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
-const bool tLine<Tdimension, TElement>::GetIntersection(typename tShape::tPoint &intersection_point, const tLine &line) const
+tIntersectionType tLine<Tdimension, TElement>::GetIntersection(typename tShape::tPoint &intersection_point, const tLine &line) const
 {
   typedef geometry::tLineSegment<Tdimension, TElement> tLineSegment;
   if (const tLineSegment *this_segment = dynamic_cast<const tLineSegment *>(this))
