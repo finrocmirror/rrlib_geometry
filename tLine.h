@@ -63,6 +63,12 @@ namespace geometry
 //----------------------------------------------------------------------
 // Forward declarations / typedefs / enums
 //----------------------------------------------------------------------
+enum tIntersectionType
+{
+  NONE,
+  SINGLE,
+  INFINITE
+};
 
 //----------------------------------------------------------------------
 // Class declaration
@@ -106,7 +112,7 @@ public:
 
   virtual const typename tShape::tPoint GetClosestPoint(const typename tShape::tPoint &reference_point) const;
 
-  const bool GetIntersection(typename tShape::tPoint &intersection_point, const tLine &line) const;
+  tIntersectionType GetIntersection(typename tShape::tPoint &intersection_point, const tLine &line) const;
 
   virtual tLine &Translate(const math::tVector<Tdimension, TElement> &translation);
   virtual tLine &Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation);
