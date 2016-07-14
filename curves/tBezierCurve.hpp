@@ -253,7 +253,7 @@ const bool tBezierCurve<Tdimension, TElement, Tdegree>::GetIntersections(std::ve
   {
     intersection_points.push_back(intersection_point);
     const tParameter baseline_parameter((intersection_points.back() - this->control_points[0]).Length() / (this->control_points[Tdegree] - this->control_points[0]).Length());
-    assert(!isnan(baseline_parameter));
+    assert(!std::isnan(baseline_parameter));
     intersection_parameters.push_back(min_parameter + (max_parameter - min_parameter) * baseline_parameter);
     return true;
   }
@@ -291,7 +291,7 @@ const bool tBezierCurve<Tdimension, TElement, Tdegree>::GetIntersections(std::ve
   {
     intersection_points.push_back(intersection_point);
     const tParameter baseline_parameter((intersection_points.back() - this->control_points[0]).Length() / (this->control_points[Tdegree] - this->control_points[0]).Length());
-    assert(!isnan(baseline_parameter));
+    assert(!std::isnan(baseline_parameter));
     intersection_parameters.push_back(min_parameter + (max_parameter - min_parameter) * baseline_parameter);
     return true;
   }
