@@ -41,8 +41,6 @@
 //----------------------------------------------------------------------
 #include <cmath>
 
-#include <boost/utility/enable_if.hpp>
-
 //----------------------------------------------------------------------
 // Internal includes with ""
 //----------------------------------------------------------------------
@@ -62,13 +60,13 @@ namespace geometry
 
 
 template <typename TElement>
-inline const math::tAngleRad GetSlope(const tLineSegment<2, TElement> &line_segment)
+inline math::tAngleRad GetSlope(const tLineSegment<2, TElement> &line_segment)
 {
   return std::atan2(line_segment.End().Y() - line_segment.Begin().Y(), line_segment.End().X() - line_segment.Begin().X());
 }
 
-template <size_t Tdimension, typename TElement, unsigned int Tdegree>
-inline const typename boost::enable_if_c < (Tdimension <= 3), double >::type GetCurvature(const tBezierCurve<Tdimension, TElement, Tdegree> &curve, TElement parameter)
+template < size_t Tdimension, typename TElement, unsigned int Tdegree, typename = typename std::enable_if<Tdimension <= 3, int>::type>
+inline double GetCurvature(const tBezierCurve<Tdimension, TElement, Tdegree> &curve, TElement parameter)
 {
   typename tBezierCurve<Tdimension, TElement, Tdegree>::tDerivative first_derivative(curve.GetDerivative());
   typename tBezierCurve<Tdimension, TElement, Tdegree>::tDerivative::tDerivative second_derivative(first_derivative.GetDerivative());
