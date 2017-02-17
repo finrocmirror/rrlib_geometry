@@ -37,5 +37,11 @@
       test/test_kd_tree.cpp
     </sources>
   </testprogram>
+  
+  <program name="geometry">
+    <sources>
+      tests/geometry.cpp
+    </sources>
+  </program>
 
 </targets>

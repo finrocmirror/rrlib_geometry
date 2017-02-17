@@ -116,6 +116,15 @@ public:
   virtual tLineSegment &Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation);
   virtual tLineSegment &Transform(const math::tMatrix < Tdimension + 1, Tdimension + 1, TElement > &transformation);
 
+  /*!
+   * Calculates intersection of this line segment with bounding box.
+   *
+   * \param bounding_box Bounding box for intersection
+   * \return 'first' contains whether line intersects bounding box; 'second' the intersection (part of line_segment; has the same direction as this line_segment)
+   */
+  std::pair<bool, tLineSegment> GetIntersection(typename tShape::tBoundingBox &bounding_box) const;
+  using tLine::GetIntersection;
+
 //----------------------------------------------------------------------
 // Private fields and methods
 //----------------------------------------------------------------------
