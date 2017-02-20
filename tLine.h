@@ -70,6 +70,9 @@ enum tIntersectionType
   INFINITE
 };
 
+template <size_t Tdimension, typename TElement>
+class tLineSegment;
+
 //----------------------------------------------------------------------
 // Class declaration
 //----------------------------------------------------------------------
@@ -113,6 +116,14 @@ public:
   virtual const typename tShape::tPoint GetClosestPoint(const typename tShape::tPoint &reference_point) const;
 
   tIntersectionType GetIntersection(typename tShape::tPoint &intersection_point, const tLine &line) const;
+
+  /*!
+   * Calculates intersection of this line with bounding box.
+   *
+   * \param bounding_box Bounding box for intersection
+   * \return 'first' contains whether line intersects bounding box; 'second' the intersection (has the same direction as this line)
+   */
+  virtual std::pair<bool, tLineSegment<Tdimension, TElement>> GetIntersection(typename tShape::tBoundingBox &bounding_box) const;
 
   virtual tLine &Translate(const math::tVector<Tdimension, TElement> &translation);
   virtual tLine &Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation);

@@ -214,6 +214,37 @@ tIntersectionType tLine<Tdimension, TElement>::GetIntersection(typename tShape::
 }
 
 //----------------------------------------------------------------------
+// tLine GetIntersection
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement>
+std::pair<bool, tLineSegment<Tdimension, TElement>> tLine<Tdimension, TElement>::GetIntersection(typename tShape::tBoundingBox &bounding_box) const
+{
+  // Bounding box is centered in zero
+  typedef typename tShape::tPoint tPoint;
+  auto box_center = (bounding_box.Max() + bounding_box.Min()) * 0.5;
+  tPoint begin_relative_to_box(Support() - box_center);
+
+  // Determine largest direction component (numerically most stable)
+  size_t max_direction_component = 0;
+  double max_direction_component_value = 0;
+  for (size_t i = 0; i < Tdimension; i++)
+  {
+    if (std::fabs(Direction()[i]) > max_direction_component_value)
+    {
+      max_direction_component = i;
+      max_direction_component_value = std::fabs(Direction()[i]);
+    }
+  }
+
+  // Calculate relevant line segment and intersect it
+  double to_box_center_factor = -(begin_relative_to_box[max_direction_component] / Direction()[max_direction_component]);
+  double box_dimension_range_factor = std::fabs((bounding_box.Max()[max_direction_component] - bounding_box.Min()[max_direction_component]) / Direction()[max_direction_component]);
+  tLineSegment<Tdimension, TElement> relevant_segment(tPoint(Support() + Direction() * (to_box_center_factor - box_dimension_range_factor)),
+      tPoint(Support() + Direction() * (to_box_center_factor + box_dimension_range_factor)));
+  return relevant_segment.GetIntersection(bounding_box);
+}
+
+//----------------------------------------------------------------------
 // tLine Translate
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>

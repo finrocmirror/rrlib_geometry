@@ -110,19 +110,19 @@ public:
     return (this->Begin() - this->End()).Length();
   }
 
-  virtual const typename tShape::tPoint GetClosestPoint(const typename tShape::tPoint &reference_point) const;
+  virtual const typename tShape::tPoint GetClosestPoint(const typename tShape::tPoint &reference_point) const override;
 
-  virtual tLineSegment &Translate(const math::tVector<Tdimension, TElement> &translation);
-  virtual tLineSegment &Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation);
-  virtual tLineSegment &Transform(const math::tMatrix < Tdimension + 1, Tdimension + 1, TElement > &transformation);
+  virtual tLineSegment &Translate(const math::tVector<Tdimension, TElement> &translation) override;
+  virtual tLineSegment &Rotate(const math::tMatrix<Tdimension, Tdimension, TElement> &rotation) override;
+  virtual tLineSegment &Transform(const math::tMatrix < Tdimension + 1, Tdimension + 1, TElement > &transformation) override;
 
   /*!
    * Calculates intersection of this line segment with bounding box.
    *
    * \param bounding_box Bounding box for intersection
-   * \return 'first' contains whether line intersects bounding box; 'second' the intersection (part of line_segment; has the same direction as this line_segment)
+   * \return 'first' contains whether line intersects bounding box; 'second' the intersection (has the same direction as this line segment)
    */
-  std::pair<bool, tLineSegment> GetIntersection(typename tShape::tBoundingBox &bounding_box) const;
+  virtual std::pair<bool, tLineSegment> GetIntersection(typename tShape::tBoundingBox &bounding_box) const override;
   using tLine::GetIntersection;
 
 //----------------------------------------------------------------------
@@ -132,8 +132,8 @@ private:
 
   typename tShape::tPoint end;
 
-  virtual void UpdateBoundingBox(typename tShape::tBoundingBox &bounding_box) const;
-  virtual void UpdateCenterOfGravity(typename tShape::tPoint &center_of_gravity) const;
+  virtual void UpdateBoundingBox(typename tShape::tBoundingBox &bounding_box) const override;
+  virtual void UpdateCenterOfGravity(typename tShape::tPoint &center_of_gravity) const override;
 
 };
 

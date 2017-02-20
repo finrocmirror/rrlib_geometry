@@ -137,6 +137,9 @@ private:
 
       AssertLineSegmentsEqual(tLineSegment(tPoint(-1 + x, 4, 5), tPoint(2 + x, 4, 2)).GetIntersection(box).second, tLineSegment(tPoint(0 + x, 4, 4), tPoint(1 + x, 4, 3)));
       AssertLineSegmentsEqual(tLineSegment(tPoint(0 + x, 4, 4), tPoint(12 + x, 5, 8)).GetIntersection(box).second, tLineSegment(tPoint(0 + x, 4, 4), tPoint(0 + x, 4, 4)));
+
+      // Check line segments
+      AssertLineSegmentsEqual(tLine<3, double>(tPoint(-111 + x, 4, 115), rrlib::math::tVec3d(-1, 0, 1)).GetIntersection(box).second, tLineSegment(tPoint(1 + x, 4, 3), tPoint(0 + x, 4, 4)));
     }
   }
 };
