@@ -227,7 +227,7 @@ std::pair<bool, tLineSegment<Tdimension, TElement>> tLineSegment<Tdimension, TEl
     }
   }
 
-  return tResult(false, tLineSegment<Tdimension, TElement>(intersection_begin.second, intersection_end.second));
+  return tResult(true, tLineSegment<Tdimension, TElement>(intersection_begin.second, intersection_end.second));
 }
 
 //----------------------------------------------------------------------
