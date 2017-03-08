@@ -33,7 +33,6 @@
 //----------------------------------------------------------------------
 #include "rrlib/util/variadic_templates.h"
 
-#include <iomanip>
 //----------------------------------------------------------------------
 // Internal includes with ""
 //----------------------------------------------------------------------
@@ -253,7 +252,8 @@ const bool tBezierCurve<Tdimension, TElement, Tdegree>::GetIntersections(std::ve
   if (own_line_segment.GetIntersection(intersection_point, other_line_segment) && !math::IsEqual(intersection_point, intersection_points.back(), 0.001))
   {
     intersection_points.push_back(intersection_point);
-    const auto baseline_parameter = math::LimitedValue<tParameter>((intersection_points.back() - this->control_points[0]).Length() / (this->control_points[Tdegree] - this->control_points[0]).Length(), 0, 1);
+    const auto baseline_length = (this->control_points[Tdegree] - this->control_points[0]).Length();
+    const auto baseline_parameter = baseline_length == 0 ? 0 : math::LimitedValue<tParameter>((intersection_points.back() - this->control_points[0]).Length() / baseline_length, 0, 1);
     assert(!std::isnan(baseline_parameter));
     intersection_parameters.push_back(min_parameter + (max_parameter - min_parameter) * baseline_parameter);
     return true;
@@ -291,7 +291,8 @@ const bool tBezierCurve<Tdimension, TElement, Tdegree>::GetIntersections(std::ve
   if (own_line_segment.GetIntersection(intersection_point, line))
   {
     intersection_points.push_back(intersection_point);
-    const auto baseline_parameter = math::LimitedValue<tParameter>((intersection_points.back() - this->control_points[0]).Length() / (this->control_points[Tdegree] - this->control_points[0]).Length(), 0, 1);
+    const auto baseline_length = (this->control_points[Tdegree] - this->control_points[0]).Length();
+    const auto baseline_parameter = baseline_length == 0 ? 0 : math::LimitedValue<tParameter>((intersection_points.back() - this->control_points[0]).Length() / baseline_length, 0, 1);
     assert(!std::isnan(baseline_parameter));
     intersection_parameters.push_back(min_parameter + (max_parameter - min_parameter) * baseline_parameter);
     return true;

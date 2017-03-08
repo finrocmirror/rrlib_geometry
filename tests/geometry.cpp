@@ -73,17 +73,11 @@ class TestGeometry : public util::tUnitTestSuite
 {
   RRLIB_UNIT_TESTS_BEGIN_SUITE(TestGeometry);
   RRLIB_UNIT_TESTS_ADD_TEST(LineSegmentBoundingBoxIntersectionTest);
+  RRLIB_UNIT_TESTS_ADD_TEST(OverlappingLineIntersections);
+  RRLIB_UNIT_TESTS_ADD_TEST(DegradedLineIntersections);
   RRLIB_UNIT_TESTS_END_SUITE;
 
 private:
-
-  virtual void InitializeTests() override
-  {
-  }
-
-  virtual void CleanUp() override
-  {
-  }
 
   template <size_t Tdimension, typename TElement>
   static void AssertLineSegmentsEqual(const tLineSegment<Tdimension, TElement>& actual, const tLineSegment<Tdimension, TElement>& expected)
@@ -108,6 +102,48 @@ private:
 
   void LineSegmentBoundingBoxIntersectionTestHelper(double x)
   {
+    {
+      tLine2D line1(tPoint2D(0, 0), tPoint2D(0, 1));
+      tLine2D line2(tPoint2D(0, 0.5), tPoint2D(0, 0.6));
+      tLine2D line3(tPoint2D(0, 0.5), tPoint2D(0, 0.5));
+      tLineSegment2D line_segment1(tPoint2D(0, 0), tPoint2D(0, 1));
+      tLineSegment2D line_segment2(tPoint2D(0, 0.5), tPoint2D(0, 0.6));
+      tLineSegment2D line_segment3(tPoint2D(0, 0.5), tPoint2D(0, 0.5));
+      tPoint2D intersection;
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line1.GetIntersection(intersection, line2));
+      RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0);
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line2.GetIntersection(intersection, line1));
+      RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0);
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line1.GetIntersection(intersection, line_segment2));
+      RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0 && intersection.Y() >= 0.5 && intersection.Y() <= 0.6);
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line_segment2.GetIntersection(intersection, line1));
+      RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0 && intersection.Y() >= 0.5 && intersection.Y() <= 0.6);
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line_segment1.GetIntersection(intersection, line2));
+      RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0 && intersection.Y() >= 0 && intersection.Y() <= 1);
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line2.GetIntersection(intersection, line_segment1));
+      RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0 && intersection.Y() >= 0 && intersection.Y() <= 1);
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line_segment1.GetIntersection(intersection, line_segment2));
+      RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0 && intersection.Y() >= 0.5 && intersection.Y() <= 0.6);
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line_segment2.GetIntersection(intersection, line_segment1));
+      RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0 && intersection.Y() >= 0.5 && intersection.Y() <= 0.6);
+
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line1.GetIntersection(intersection, line3));
+      RRLIB_UNIT_TESTS_EQUALITY(line3.Support(), intersection);
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line3.GetIntersection(intersection, line1));
+      RRLIB_UNIT_TESTS_EQUALITY(line3.Support(), intersection);
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line1.GetIntersection(intersection, line_segment3));
+      RRLIB_UNIT_TESTS_EQUALITY(line_segment3.Support(), intersection);
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line_segment3.GetIntersection(intersection, line1));
+      RRLIB_UNIT_TESTS_EQUALITY(line_segment3.Support(), intersection);
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line_segment1.GetIntersection(intersection, line3));
+      RRLIB_UNIT_TESTS_EQUALITY(line3.Support(), intersection);
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line3.GetIntersection(intersection, line_segment1));
+      RRLIB_UNIT_TESTS_EQUALITY(line3.Support(), intersection);
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line_segment1.GetIntersection(intersection, line_segment3));
+      RRLIB_UNIT_TESTS_EQUALITY(line_segment3.Support(), intersection);
+      RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line_segment3.GetIntersection(intersection, line_segment1));
+      RRLIB_UNIT_TESTS_EQUALITY(line_segment3.Support(), intersection);
+    }
     {
       tBoundingBox<2, double> box;
       typedef tLineSegment2D tLineSegment;
@@ -142,6 +178,59 @@ private:
       AssertLineSegmentsEqual(tLine<3, double>(tPoint(-111 + x, 4, 115), rrlib::math::tVec3d(-1, 0, 1)).GetIntersection(box).second, tLineSegment(tPoint(1 + x, 4, 3), tPoint(0 + x, 4, 4)));
     }
   }
+
+  void OverlappingLineIntersections()
+  {
+    tLine2D line1(tPoint2D(0, 0), tPoint2D(0, 1));
+    tLine2D line2(tPoint2D(0, 0.5), tPoint2D(0, 0.6));
+    tLineSegment2D line_segment1(tPoint2D(0, 0), tPoint2D(0, 1));
+    tLineSegment2D line_segment2(tPoint2D(0, 0.5), tPoint2D(0, 0.6));
+    tPoint2D intersection;
+
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line1.GetIntersection(intersection, line2));
+    RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0);
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line2.GetIntersection(intersection, line1));
+    RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0);
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line1.GetIntersection(intersection, line_segment2));
+    RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0 && intersection.Y() >= 0.5 && intersection.Y() <= 0.6);
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line_segment2.GetIntersection(intersection, line1));
+    RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0 && intersection.Y() >= 0.5 && intersection.Y() <= 0.6);
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line_segment1.GetIntersection(intersection, line2));
+    RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0 && intersection.Y() >= 0 && intersection.Y() <= 1);
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line2.GetIntersection(intersection, line_segment1));
+    RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0 && intersection.Y() >= 0 && intersection.Y() <= 1);
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line_segment1.GetIntersection(intersection, line_segment2));
+    RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0 && intersection.Y() >= 0.5 && intersection.Y() <= 0.6);
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::INFINITE, line_segment2.GetIntersection(intersection, line_segment1));
+    RRLIB_UNIT_TESTS_ASSERT(intersection.X() == 0 && intersection.Y() >= 0.5 && intersection.Y() <= 0.6);
+  }
+
+  void DegradedLineIntersections()
+  {
+    tLine2D line1(tPoint2D(0, 0), tPoint2D(0, 1));
+    tLine2D line2(tPoint2D(0, 0.5), tPoint2D(0, 0.5));
+    tLineSegment2D line_segment1(tPoint2D(0, 0), tPoint2D(0, 1));
+    tLineSegment2D line_segment2(tPoint2D(0, 0.5), tPoint2D(0, 0.5));
+    tPoint2D intersection;
+
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line1.GetIntersection(intersection, line2));
+    RRLIB_UNIT_TESTS_EQUALITY(line2.Support(), intersection);
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line2.GetIntersection(intersection, line1));
+    RRLIB_UNIT_TESTS_EQUALITY(line2.Support(), intersection);
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line1.GetIntersection(intersection, line_segment2));
+    RRLIB_UNIT_TESTS_EQUALITY(line_segment2.Support(), intersection);
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line_segment2.GetIntersection(intersection, line1));
+    RRLIB_UNIT_TESTS_EQUALITY(line_segment2.Support(), intersection);
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line_segment1.GetIntersection(intersection, line2));
+    RRLIB_UNIT_TESTS_EQUALITY(line2.Support(), intersection);
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line2.GetIntersection(intersection, line_segment1));
+    RRLIB_UNIT_TESTS_EQUALITY(line2.Support(), intersection);
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line_segment1.GetIntersection(intersection, line_segment2));
+    RRLIB_UNIT_TESTS_EQUALITY(line_segment2.Support(), intersection);
+    RRLIB_UNIT_TESTS_EQUALITY(tIntersectionType::SINGLE, line_segment2.GetIntersection(intersection, line_segment1));
+    RRLIB_UNIT_TESTS_EQUALITY(line_segment2.Support(), intersection);
+  }
+
 };
 
 RRLIB_UNIT_TESTS_REGISTER_SUITE(TestGeometry);
