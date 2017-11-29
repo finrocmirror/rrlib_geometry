@@ -135,9 +135,20 @@ namespace
 template <size_t Tdimension, typename TElement>
 tIntersectionType IntersectLineWithLine(typename tLine<Tdimension, TElement>::tPoint &intersection_point, const tLine<Tdimension, TElement> &left, const tLine<Tdimension, TElement> &right)
 {
+  if (left.Direction().Length() == 0)
+  {
+    intersection_point = left.Support();
+    return right.GetClosestPoint(intersection_point) == intersection_point ? tIntersectionType::SINGLE : tIntersectionType::NONE;
+  }
+  if (right.Direction().Length() == 0)
+  {
+    intersection_point = right.Support();
+    return left.GetClosestPoint(intersection_point) == intersection_point ? tIntersectionType::SINGLE : tIntersectionType::NONE;
+  }
+
   if (left.Direction() == right.Direction() || left.Direction() == -right.Direction())
   {
-    if (left.GetClosestPoint(right.Support()) == right.Support())
+    if (left.tLine<Tdimension, TElement>::GetClosestPoint(right.Support()) == right.Support())
     {
       intersection_point = right.Support();
       return tIntersectionType::INFINITE;
@@ -167,9 +178,11 @@ tIntersectionType IntersectLineWithLine(typename tLine<Tdimension, TElement>::tP
 template <size_t Tdimension, typename TElement>
 tIntersectionType IntersectLineWithLineSegment(typename tLine<Tdimension, TElement>::tPoint &intersection_point, const tLine<Tdimension, TElement> &left, const geometry::tLineSegment<Tdimension, TElement> &right)
 {
-  if (!IntersectLineWithLine(intersection_point, left, right))
+  auto intersection_type = IntersectLineWithLine(intersection_point, left, right);
+  if (intersection_type == tIntersectionType::INFINITE || intersection_type == tIntersectionType::NONE)
   {
-    return tIntersectionType::NONE;
+    intersection_point = right.GetClosestPoint(intersection_point);
+    return intersection_type;
   }
   return math::IsEqual(right.GetDistanceToPoint(intersection_point), 0) ? tIntersectionType::SINGLE : tIntersectionType::NONE;
 }
@@ -182,9 +195,11 @@ tIntersectionType IntersectLineSegmentWithLineSegment(typename tLine<Tdimension,
     return tIntersectionType::NONE;
   }
 
-  if (!IntersectLineWithLineSegment(intersection_point, left, right))
+  auto intersection_type = IntersectLineWithLineSegment(intersection_point, left, right);
+  if (intersection_type == tIntersectionType::NONE || intersection_type == tIntersectionType::INFINITE)
   {
-    return tIntersectionType::NONE;
+    intersection_point = left.GetClosestPoint(intersection_point);
+    return intersection_type;
   }
   return math::IsEqual(left.GetDistanceToPoint(intersection_point), 0) ? tIntersectionType::SINGLE : tIntersectionType::NONE;
 }
@@ -211,6 +226,37 @@ tIntersectionType tLine<Tdimension, TElement>::GetIntersection(typename tShape::
     return IntersectLineWithLineSegment(intersection_point, *this, *line_segment);
   }
   return IntersectLineWithLine(intersection_point, *this, line);
+}
+
+//----------------------------------------------------------------------
+// tLine GetIntersection
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement>
+std::pair<bool, tLineSegment<Tdimension, TElement>> tLine<Tdimension, TElement>::GetIntersection(typename tShape::tBoundingBox &bounding_box) const
+{
+  // Bounding box is centered in zero
+  typedef typename tShape::tPoint tPoint;
+  auto box_center = (bounding_box.Max() + bounding_box.Min()) * 0.5;
+  tPoint begin_relative_to_box(Support() - box_center);
+
+  // Determine largest direction component (numerically most stable)
+  size_t max_direction_component = 0;
+  double max_direction_component_value = 0;
+  for (size_t i = 0; i < Tdimension; i++)
+  {
+    if (std::fabs(Direction()[i]) > max_direction_component_value)
+    {
+      max_direction_component = i;
+      max_direction_component_value = std::fabs(Direction()[i]);
+    }
+  }
+
+  // Calculate relevant line segment and intersect it
+  double to_box_center_factor = -(begin_relative_to_box[max_direction_component] / Direction()[max_direction_component]);
+  double box_dimension_range_factor = std::fabs((bounding_box.Max()[max_direction_component] - bounding_box.Min()[max_direction_component]) / Direction()[max_direction_component]);
+  tLineSegment<Tdimension, TElement> relevant_segment(tPoint(Support() + Direction() * (to_box_center_factor - box_dimension_range_factor)),
+      tPoint(Support() + Direction() * (to_box_center_factor + box_dimension_range_factor)));
+  return relevant_segment.GetIntersection(bounding_box);
 }
 
 //----------------------------------------------------------------------

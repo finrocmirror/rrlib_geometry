@@ -112,6 +112,125 @@ const typename tShape<Tdimension, TElement>::tPoint tLineSegment<Tdimension, TEl
 }
 
 //----------------------------------------------------------------------
+// tLineSegment GetIntersection
+//----------------------------------------------------------------------
+template <size_t Tdimension, typename TElement>
+std::pair<bool, tLineSegment<Tdimension, TElement>> tLineSegment<Tdimension, TElement>::GetIntersection(typename tShape::tBoundingBox &bounding_box) const
+{
+  typedef typename tShape::tPoint tPoint;
+  typedef std::pair<double, tPoint> tIntersection;                     // Intersection point (first is relative distance to line_segment.Begin() with range: 0-1)
+  std::array<std::pair<double, tPoint>, Tdimension * 2> intersections; // Intersection points (cannot be more than two - corners, however, may be added multiple times)
+  size_t intersection_count = 0;                                       // Number of intersections
+  typedef std::pair<uint, tLineSegment<Tdimension, TElement>> tResult;
+  typedef rrlib::math::tVector<Tdimension, TElement> tVector;
+
+  // Are begin/end points already in bounding box?
+  if (bounding_box.Contains(Begin()))
+  {
+    intersections[intersection_count] = tIntersection(0, Begin());
+    intersection_count++;
+  }
+  if (bounding_box.Contains(End()))
+  {
+    intersections[intersection_count] = tIntersection(1, End());
+    intersection_count++;
+  }
+  if (intersection_count == 2)
+  {
+    return tResult(true, *this);
+  }
+
+  // Check whether/where line segments cross sides of bounding box
+  tVector diff_vector = End() - Begin();
+
+  // To avoid numeric instabilities/asymmetries, bounding box is centered in zero
+  tVector box_dimension = bounding_box.Max() - bounding_box.Min();
+  tVector box_center = (bounding_box.Max() + bounding_box.Min()) * 0.5;
+  tBoundingBox<Tdimension, TElement> centered_box;
+  centered_box.Add(tPoint(box_dimension * 0.5));
+  centered_box.Add(tPoint(-box_dimension * 0.5));
+  tPoint begin_relative_to_box(Begin() - box_center);
+  tPoint end_relative_to_box(End() - box_center);
+  tPoint interpolated;
+  for (size_t i = 0; i < Tdimension; i++)
+  {
+    // min side of dimension
+    if ((begin_relative_to_box[i] < centered_box.Min()[i] && end_relative_to_box[i] >= centered_box.Min()[i]) ||
+        (end_relative_to_box[i] < centered_box.Min()[i] && begin_relative_to_box[i] >= centered_box.Min()[i]))
+    {
+      double distance_begin = std::fabs(centered_box.Min()[i] - begin_relative_to_box[i]);
+      double distance_end = std::fabs(centered_box.Min()[i] - end_relative_to_box[i]);
+      double relative_begin_distance = distance_begin / (distance_begin + distance_end);
+      if (distance_begin <= distance_end)
+      {
+        interpolated = begin_relative_to_box + (diff_vector * relative_begin_distance);
+      }
+      else
+      {
+        double relative_end_distance = distance_end / (distance_begin + distance_end);
+        interpolated = end_relative_to_box - (diff_vector * relative_end_distance);
+      }
+      interpolated[i] = centered_box.Min()[i]; // eliminate any numeric errors in this dimension at least
+      if (centered_box.Contains(interpolated))
+      {
+        tPoint p = interpolated + box_center;
+        p[i] = bounding_box.Min()[i];
+        intersections[intersection_count] = tIntersection(relative_begin_distance, p);
+        intersection_count++;
+      }
+    }
+    // max side of dimension
+    if ((begin_relative_to_box[i] > centered_box.Max()[i] && end_relative_to_box[i] <= centered_box.Max()[i]) ||
+        (end_relative_to_box[i] > centered_box.Max()[i] && begin_relative_to_box[i] <= centered_box.Max()[i]))
+    {
+      double distance_begin = std::fabs(centered_box.Max()[i] - begin_relative_to_box[i]);
+      double distance_end = std::fabs(centered_box.Max()[i] - end_relative_to_box[i]);
+      double relative_begin_distance = distance_begin / (distance_begin + distance_end);
+      if (distance_begin <= distance_end)
+      {
+        interpolated = begin_relative_to_box + (diff_vector * relative_begin_distance);
+      }
+      else
+      {
+        double relative_end_distance = distance_end / (distance_begin + distance_end);
+        interpolated = end_relative_to_box - (diff_vector * relative_end_distance);
+      }
+      interpolated[i] = centered_box.Max()[i]; // eliminate any numeric errors in this dimension at least
+      if (centered_box.Contains(interpolated))
+      {
+        tPoint p = interpolated + box_center;
+        p[i] = bounding_box.Max()[i];
+        intersections[intersection_count] = tIntersection(relative_begin_distance, p);
+        intersection_count++;
+      }
+    }
+  }
+
+  if (!intersection_count)
+  {
+    return tResult(false, tLineSegment<Tdimension, TElement>());
+  }
+
+  // Prepare result
+  tIntersection intersection_begin = intersections[0];
+  tIntersection intersection_end = intersections[0];
+  for (size_t i = 1; i < intersection_count; i++)
+  {
+    const tIntersection& intersection = intersections[i];
+    if (intersection.first < intersection_begin.first)
+    {
+      intersection_begin = intersection;
+    }
+    if (intersection.first > intersection_end.first)
+    {
+      intersection_end = intersection;
+    }
+  }
+
+  return tResult(true, tLineSegment<Tdimension, TElement>(intersection_begin.second, intersection_end.second));
+}
+
+//----------------------------------------------------------------------
 // tLineSegment Translate
 //----------------------------------------------------------------------
 template <size_t Tdimension, typename TElement>
